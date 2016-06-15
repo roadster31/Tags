@@ -16,16 +16,16 @@
 
     <hooks>
         <hook id="tags.product_edit.hook" class="Tags\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="product-edit.right-column.bottom" type="back" method="onProductEditRightColumnBottom" />
+            <tag name="hook.event_listener" event="product.modification.form-right.bottom" type="back" method="onProductEditRightColumnBottom" />
         </hook>
         <hook id="tags.category_edit.hook" class="Tags\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="category-edit.right-column.bottom" type="back" method="onCategoryEditRightColumnBottom" />
+            <tag name="hook.event_listener" event="category.modification.form-right.bottom" type="back" method="onCategoryEditRightColumnBottom" />
         </hook>
         <hook id="tags.content_edit.hook" class="Tags\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="content-edit.right-column.bottom" type="back" method="onContentEditRightColumnBottom" />
+            <tag name="hook.event_listener" event="content.modification.form-right.bottom" type="back" method="onContentEditRightColumnBottom" />
         </hook>
         <hook id="tags.folder_edit.hook" class="Tags\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="folder-edit.right-column.bottom" type="back" method="onFolderEditRightColumnBottom" />
+            <tag name="hook.event_listener" event="folder.modification.form-right.bottom" type="back" method="onFolderEditRightColumnBottom" />
         </hook>
 
         <hook id="tags.configuration.hook" class="Tags\Hook\HookManager" scope="request">

@@ -77,7 +77,7 @@ class EventManager implements EventSubscriberInterface
                 'label_attr'  => [
                     'help' => Translator::getInstance()->trans(
                         'Enter one or more tags, separated by commas. <a href="%url%">View all defined tags</a>.',
-                        [ '%url%' => URL::getInstance()->absoluteUrl('/admin/modules/Tags') ],
+                        [ '%url%' => URL::getInstance()->absoluteUrl('/admin/module/Tags') ],
                         Tags::DOMAIN_NAME
                     )
                 ]
