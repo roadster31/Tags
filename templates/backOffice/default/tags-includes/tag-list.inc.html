@@ -1,0 +1,32 @@
+{ifloop rel="tags-list"}
+    <div class="general-block-decorator">
+        <table class="table table-striped table-condensed table-left-aligned">
+            <caption class="clearfix">{$label}</caption>
+            <thead>
+            <tr>
+                <th>{intl d='tags.bo' l="Tag"}</th>
+                <th>{intl d='tags.bo' l="ID"}</th>
+                <th>{intl d='tags.bo' l="Title"}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop type="tags" name="tags-list" source=$source order='alpha,source-id'}
+                {$nothing = false scope=parent}
+                <tr>
+                    <td>{$TAG}</td>
+                    {ifloop rel="info"}
+                        {loop name="info" type=$source backend_context=1 visible="*" id=$SOURCE_ID}
+                            <td><a href="{$url|replace:'__ID__':$ID}">{$ID}</a></td>
+                            <td><a href="{$url|replace:'__ID__':$ID}">{$TITLE}</a></td>
+                        {/loop}
+                    {/ifloop}
+                    {elseloop rel="info"}
+                        {$orphans = true scope=parent}
+                        <td colspan="2" class="text-danger">{intl d='tags.bo' l="Orphaned tag. The related object (Id=%id) is missing." id=$SOURCE_ID}</td>
+                    {/elseloop}
+                </tr>
+            {/loop}
+            </tbody>
+        </table>
+    </div>
+{/ifloop}

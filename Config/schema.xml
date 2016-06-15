@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="thelia"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="../../../core/vendor/propel/propel/resources/xsd/database.xsd" >
+
+    <table name="tags" namespace="Tags\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+        <column name="tag" size="255" type="VARCHAR" />
+        <column name="source" type="CLOB" />
+        <column name="source_id" type="INTEGER" />
+    </table>
+
+    <external-schema filename="local/config/schema.xml" referenceOnly="true" />
+</database>
