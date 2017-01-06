@@ -42,7 +42,7 @@ class ConfigController extends BaseAdminController
         }
 
         return new RedirectResponse(
-            URL::getInstance()->absoluteUrl('/admin/modules/Tags')
+            URL::getInstance()->absoluteUrl('/admin/module/Tags')
         );
     }
 }
