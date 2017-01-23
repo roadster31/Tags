@@ -35,6 +35,11 @@ Le paramètre tag peut prendre un ou plusieurs valeurs, vous pouvez donc remonte
     {loop type="content" name="my-specific-content" tag='mon-ta-1,montag-2,...'} ... {/loop}
 ```
 
+## Back-office
+
+Le module ajoute un entrée 'Tags' dans le menu Outils du back-office, qui vous donne accès à la liste de tous les tags
+définis sur les produits, catégories, contenus et dossiers.
+
 ## La boucle tags
 
 ### Paramètres
@@ -68,3 +73,4 @@ Pour remonter le contenu ayant le tag `mon-contenu-special` :
     {loop type="content" name="my-specific-content" id=$SOURCE_ID} ... {/loop}
 {/loop}    
 ```
+
