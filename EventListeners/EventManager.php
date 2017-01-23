@@ -12,7 +12,9 @@
 
 namespace Tags\EventListeners;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Tags\Model\Map\TagsTableMap;
 use Tags\Model\TagsQuery;
 use Tags\Tags;
 use Thelia\Core\Event\ActionEvent;
@@ -22,11 +24,18 @@ use Thelia\Core\Event\Content\ContentDeleteEvent;
 use Thelia\Core\Event\Content\ContentEvent;
 use Thelia\Core\Event\Folder\FolderDeleteEvent;
 use Thelia\Core\Event\Folder\FolderEvent;
+use Thelia\Core\Event\Loop\LoopExtendsArgDefinitionsEvent;
+use Thelia\Core\Event\Loop\LoopExtendsBuildModelCriteriaEvent;
 use Thelia\Core\Event\Product\ProductDeleteEvent;
 use Thelia\Core\Event\Product\ProductEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Event\TheliaFormEvent;
+use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Translation\Translator;
+use Thelia\Model\Map\CategoryTableMap;
+use Thelia\Model\Map\ContentTableMap;
+use Thelia\Model\Map\FolderTableMap;
+use Thelia\Model\Map\ProductTableMap;
 use Thelia\Tools\URL;
 
 class EventManager implements EventSubscriberInterface
@@ -59,7 +68,60 @@ class EventManager implements EventSubscriberInterface
             
             TheliaEvents::CONTENT_CREATE  => ['processContentFields', 100],
             TheliaEvents::CONTENT_UPDATE  => ['processContentFields', 100],
+            
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'content') => ['addLoopArgDefinition', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'product') => ['addLoopArgDefinition', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'folder') => ['addLoopArgDefinition', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'category') => ['addLoopArgDefinition', 128],
+            
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'content') => ['contentLoopBuildModelCriteria', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'product') => ['productLoopBuildModelCriteria', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'folder')  => ['folderLoopBuildModelCriteria', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'category') => ['categoryLoopBuildModelCriteria', 128],
         ];
+    }
+    
+    public function addLoopArgDefinition(LoopExtendsArgDefinitionsEvent $event)
+    {
+        $argument = $event->getArgumentCollection();
+        $argument->addArgument(
+            Argument::createAnyListTypeArgument('tag')
+        );
+    }
+    
+    public function contentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $this->setupLoopBuildModelCriteria(ContentTableMap::ID, 'content', $event);
+    }
+    
+    public function categoryLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $this->setupLoopBuildModelCriteria(CategoryTableMap::ID, 'category', $event);
+    }
+    
+    public function productLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $this->setupLoopBuildModelCriteria(ProductTableMap::ID, 'product', $event);
+    }
+    
+    public function folderLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $this->setupLoopBuildModelCriteria(FolderTableMap::ID, 'folder', $event);
+    }
+    
+    protected function setupLoopBuildModelCriteria($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $tags = $event->getLoop()->getArgumentCollection()->get('tag')->getValue();
+        
+        if (! empty($tags)) {
+            $search = $event->getModelCriteria();
+            
+            $search
+                ->addJoin($leftTableFieldName, TagsTableMap::SOURCE_ID, Criteria::LEFT_JOIN) // Can also be left/right
+                ->add(TagsTableMap::SOURCE, $loopType, Criteria::EQUAL)
+                ->add(TagsTableMap::TAG, $tags, Criteria::IN)
+            ;
+        }
     }
     
     public function addFieldToForm(TheliaFormEvent $event)

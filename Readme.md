@@ -17,9 +17,23 @@ vous pouvez tagger le contenu qui a l'ID 12 avec 'mon-contenu-special' et utilis
 {/loop}    
 ```
 
+## Extension des boucles standard
+
 Vous évitez ainsi de mettre des ID en dur dans votre code. C'est l'une des utilisations possible de ces tags, mais il
 en existe surement bien d'autres.
 
+À partir de la version 1.1 du module, vous pouvez utiliser directement le paramètre `tag` dans les boucles `product`, 
+`content`, `folder` et `category`. C'est une requête d'économisée !
+
+```
+    {loop type="content" name="my-specific-content" tag='mon-contenu-special'} ... {/loop}
+```
+
+Le paramètre tag peut prendre un ou plusieurs valeurs, vous pouvez donc remonter les objets désignés par plusieurs tags :
+
+```
+    {loop type="content" name="my-specific-content" tag='mon-ta-1,montag-2,...'} ... {/loop}
+```
 
 ## La boucle tags
 
