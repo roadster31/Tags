@@ -15,6 +15,10 @@
     </services>
 
     <hooks>
+        <hook id="tags.menutools.hook" class="Tags\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="main.top-menu-tools" type="back" method="onMainTopMenuTools" />
+        </hook>
+
         <hook id="tags.product_edit.hook" class="Tags\Hook\HookManager" scope="request">
             <tag name="hook.event_listener" event="product.modification.form-right.bottom" type="back" method="onProductEditRightColumnBottom" />
         </hook>

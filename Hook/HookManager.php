@@ -20,11 +20,25 @@ namespace Tags\Hook;
 
 use Tags\Model\Tags;
 use Tags\Model\TagsQuery;
+use Thelia\Core\Event\Hook\HookRenderBlockEvent;
 use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
+use Thelia\Tools\URL;
 
 class HookManager extends BaseHook
 {
+    public function onMainTopMenuTools(HookRenderBlockEvent $event)
+    {
+        $event->add(
+            [
+                'id' => 'tools_menu_tags',
+                'class' => '',
+                'url' => URL::getInstance()->absoluteUrl('/admin/module/Tags'),
+                'title' => "Tags"
+            ]
+        );
+    }
+    
     private function processFieldHook(HookRenderEvent $event, $sourceType, $sourceId)
     {
         $tags = TagsQuery::create()
@@ -35,7 +49,7 @@ class HookManager extends BaseHook
         $tagValue = '';
 
         /** @var Tags $tag */
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $tagValue .= $tag->getTag() . ', ';
         }
 
