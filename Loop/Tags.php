@@ -41,6 +41,8 @@ use Thelia\Type\TypeCollection;
  */
 class Tags extends BaseLoop implements PropelSearchLoopInterface
 {
+    protected $timestampable = true;
+
     protected function getArgDefinitions()
     {
         return new ArgumentCollection(
@@ -70,6 +72,8 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
                             'alpha', 'alpha-reverse',
                             'source', 'source-reverse',
                             'source-id', 'source-id-reverse',
+                            'create-date', 'create-date-reverse',
+                            'update-date', 'update-date-reverse',
                             'random'
                         ]
                     )
@@ -136,11 +140,25 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
                     $query->orderBySource(Criteria::DESC);
                     break;
 
-                case 'source_id':
+                case 'source-id':
                     $query->orderBySourceId();
                     break;
                 case 'source-id-reverse':
                     $query->orderBySourceId(Criteria::DESC);
+                    break;
+
+                case 'create-date':
+                    $query->orderByCreatedAt();
+                    break;
+                case 'create-date-reverse':
+                    $query->orderByCreatedAt(Criteria::DESC);
+                    break;
+
+                case 'update-date':
+                    $query->orderByUpdatedAt();
+                    break;
+                case 'update-date-reverse':
+                    $query->orderByUpdatedAt(Criteria::DESC);
                     break;
 
                 case 'random':

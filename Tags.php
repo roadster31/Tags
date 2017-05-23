@@ -26,4 +26,13 @@ class Tags extends BaseModule
         $database = new Database($con->getWrappedConnection());
         $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
     }
+
+
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    {
+        if (version_compare($currentVersion, '1.2.0') == -1) {
+            $database = new Database($con->getWrappedConnection());
+            $database->insertSql(null, array(__DIR__ . '/Config/update1.1.sql'));
+        }
+    }
 }

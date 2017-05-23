@@ -58,7 +58,7 @@ class TagsTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class TagsTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the ID field
@@ -91,6 +91,16 @@ class TagsTableMap extends TableMap
     const SOURCE_ID = 'tags.SOURCE_ID';
 
     /**
+     * the column name for the CREATED_AT field
+     */
+    const CREATED_AT = 'tags.CREATED_AT';
+
+    /**
+     * the column name for the UPDATED_AT field
+     */
+    const UPDATED_AT = 'tags.UPDATED_AT';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -102,12 +112,12 @@ class TagsTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Tag', 'Source', 'SourceId', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'tag', 'source', 'sourceId', ),
-        self::TYPE_COLNAME       => array(TagsTableMap::ID, TagsTableMap::TAG, TagsTableMap::SOURCE, TagsTableMap::SOURCE_ID, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'TAG', 'SOURCE', 'SOURCE_ID', ),
-        self::TYPE_FIELDNAME     => array('id', 'tag', 'source', 'source_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'Tag', 'Source', 'SourceId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'tag', 'source', 'sourceId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(TagsTableMap::ID, TagsTableMap::TAG, TagsTableMap::SOURCE, TagsTableMap::SOURCE_ID, TagsTableMap::CREATED_AT, TagsTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'TAG', 'SOURCE', 'SOURCE_ID', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'tag', 'source', 'source_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -117,12 +127,12 @@ class TagsTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Tag' => 1, 'Source' => 2, 'SourceId' => 3, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'tag' => 1, 'source' => 2, 'sourceId' => 3, ),
-        self::TYPE_COLNAME       => array(TagsTableMap::ID => 0, TagsTableMap::TAG => 1, TagsTableMap::SOURCE => 2, TagsTableMap::SOURCE_ID => 3, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'TAG' => 1, 'SOURCE' => 2, 'SOURCE_ID' => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'tag' => 1, 'source' => 2, 'source_id' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Tag' => 1, 'Source' => 2, 'SourceId' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'tag' => 1, 'source' => 2, 'sourceId' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+        self::TYPE_COLNAME       => array(TagsTableMap::ID => 0, TagsTableMap::TAG => 1, TagsTableMap::SOURCE => 2, TagsTableMap::SOURCE_ID => 3, TagsTableMap::CREATED_AT => 4, TagsTableMap::UPDATED_AT => 5, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'TAG' => 1, 'SOURCE' => 2, 'SOURCE_ID' => 3, 'CREATED_AT' => 4, 'UPDATED_AT' => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'tag' => 1, 'source' => 2, 'source_id' => 3, 'created_at' => 4, 'updated_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -145,6 +155,8 @@ class TagsTableMap extends TableMap
         $this->addColumn('TAG', 'Tag', 'VARCHAR', false, 255, null);
         $this->addColumn('SOURCE', 'Source', 'CLOB', false, null, null);
         $this->addColumn('SOURCE_ID', 'SourceId', 'INTEGER', false, null, null);
+        $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -153,6 +165,19 @@ class TagsTableMap extends TableMap
     public function buildRelations()
     {
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -296,11 +321,15 @@ class TagsTableMap extends TableMap
             $criteria->addSelectColumn(TagsTableMap::TAG);
             $criteria->addSelectColumn(TagsTableMap::SOURCE);
             $criteria->addSelectColumn(TagsTableMap::SOURCE_ID);
+            $criteria->addSelectColumn(TagsTableMap::CREATED_AT);
+            $criteria->addSelectColumn(TagsTableMap::UPDATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.TAG');
             $criteria->addSelectColumn($alias . '.SOURCE');
             $criteria->addSelectColumn($alias . '.SOURCE_ID');
+            $criteria->addSelectColumn($alias . '.CREATED_AT');
+            $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }
     }
 

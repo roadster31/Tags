@@ -15,6 +15,8 @@ CREATE TABLE `tags`
     `tag` VARCHAR(255),
     `source` LONGTEXT,
     `source_id` INTEGER,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 

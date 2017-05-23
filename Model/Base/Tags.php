@@ -2,6 +2,7 @@
 
 namespace Tags\Model\Base;
 
+use \DateTime;
 use \Exception;
 use \PDO;
 use Propel\Runtime\Propel;
@@ -14,6 +15,8 @@ use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
+use Tags\Model\Tags as ChildTags;
 use Tags\Model\TagsQuery as ChildTagsQuery;
 use Tags\Model\Map\TagsTableMap;
 
@@ -74,6 +77,18 @@ abstract class Tags implements ActiveRecordInterface
      * @var        int
      */
     protected $source_id;
+
+    /**
+     * The value for the created_at field.
+     * @var        string
+     */
+    protected $created_at;
+
+    /**
+     * The value for the updated_at field.
+     * @var        string
+     */
+    protected $updated_at;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -386,6 +401,46 @@ abstract class Tags implements ActiveRecordInterface
     }
 
     /**
+     * Get the [optionally formatted] temporal [created_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw \DateTime object will be returned.
+     *
+     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getCreatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->created_at;
+        } else {
+            return $this->created_at instanceof \DateTime ? $this->created_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [updated_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw \DateTime object will be returned.
+     *
+     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getUpdatedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->updated_at;
+        } else {
+            return $this->updated_at instanceof \DateTime ? $this->updated_at->format($format) : null;
+        }
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -470,6 +525,48 @@ abstract class Tags implements ActiveRecordInterface
     } // setSourceId()
 
     /**
+     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
+     *
+     * @param      mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return   \Tags\Model\Tags The current object (for fluent API support)
+     */
+    public function setCreatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
+        if ($this->created_at !== null || $dt !== null) {
+            if ($dt !== $this->created_at) {
+                $this->created_at = $dt;
+                $this->modifiedColumns[TagsTableMap::CREATED_AT] = true;
+            }
+        } // if either are not null
+
+
+        return $this;
+    } // setCreatedAt()
+
+    /**
+     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+     *
+     * @param      mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return   \Tags\Model\Tags The current object (for fluent API support)
+     */
+    public function setUpdatedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
+        if ($this->updated_at !== null || $dt !== null) {
+            if ($dt !== $this->updated_at) {
+                $this->updated_at = $dt;
+                $this->modifiedColumns[TagsTableMap::UPDATED_AT] = true;
+            }
+        } // if either are not null
+
+
+        return $this;
+    } // setUpdatedAt()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -517,6 +614,18 @@ abstract class Tags implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : TagsTableMap::translateFieldName('SourceId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->source_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : TagsTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : TagsTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -525,7 +634,7 @@ abstract class Tags implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = TagsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = TagsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Tags\Model\Tags object", 0, $e);
@@ -656,8 +765,19 @@ abstract class Tags implements ActiveRecordInterface
             $ret = $this->preSave($con);
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+                if (!$this->isColumnModified(TagsTableMap::CREATED_AT)) {
+                    $this->setCreatedAt(time());
+                }
+                if (!$this->isColumnModified(TagsTableMap::UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(TagsTableMap::UPDATED_AT)) {
+                    $this->setUpdatedAt(time());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -746,6 +866,12 @@ abstract class Tags implements ActiveRecordInterface
         if ($this->isColumnModified(TagsTableMap::SOURCE_ID)) {
             $modifiedColumns[':p' . $index++]  = 'SOURCE_ID';
         }
+        if ($this->isColumnModified(TagsTableMap::CREATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'CREATED_AT';
+        }
+        if ($this->isColumnModified(TagsTableMap::UPDATED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'UPDATED_AT';
+        }
 
         $sql = sprintf(
             'INSERT INTO tags (%s) VALUES (%s)',
@@ -768,6 +894,12 @@ abstract class Tags implements ActiveRecordInterface
                         break;
                     case 'SOURCE_ID':
                         $stmt->bindValue($identifier, $this->source_id, PDO::PARAM_INT);
+                        break;
+                    case 'CREATED_AT':
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'UPDATED_AT':
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -843,6 +975,12 @@ abstract class Tags implements ActiveRecordInterface
             case 3:
                 return $this->getSourceId();
                 break;
+            case 4:
+                return $this->getCreatedAt();
+                break;
+            case 5:
+                return $this->getUpdatedAt();
+                break;
             default:
                 return null;
                 break;
@@ -875,6 +1013,8 @@ abstract class Tags implements ActiveRecordInterface
             $keys[1] => $this->getTag(),
             $keys[2] => $this->getSource(),
             $keys[3] => $this->getSourceId(),
+            $keys[4] => $this->getCreatedAt(),
+            $keys[5] => $this->getUpdatedAt(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -926,6 +1066,12 @@ abstract class Tags implements ActiveRecordInterface
             case 3:
                 $this->setSourceId($value);
                 break;
+            case 4:
+                $this->setCreatedAt($value);
+                break;
+            case 5:
+                $this->setUpdatedAt($value);
+                break;
         } // switch()
     }
 
@@ -954,6 +1100,8 @@ abstract class Tags implements ActiveRecordInterface
         if (array_key_exists($keys[1], $arr)) $this->setTag($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setSource($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setSourceId($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setUpdatedAt($arr[$keys[5]]);
     }
 
     /**
@@ -969,6 +1117,8 @@ abstract class Tags implements ActiveRecordInterface
         if ($this->isColumnModified(TagsTableMap::TAG)) $criteria->add(TagsTableMap::TAG, $this->tag);
         if ($this->isColumnModified(TagsTableMap::SOURCE)) $criteria->add(TagsTableMap::SOURCE, $this->source);
         if ($this->isColumnModified(TagsTableMap::SOURCE_ID)) $criteria->add(TagsTableMap::SOURCE_ID, $this->source_id);
+        if ($this->isColumnModified(TagsTableMap::CREATED_AT)) $criteria->add(TagsTableMap::CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(TagsTableMap::UPDATED_AT)) $criteria->add(TagsTableMap::UPDATED_AT, $this->updated_at);
 
         return $criteria;
     }
@@ -1035,6 +1185,8 @@ abstract class Tags implements ActiveRecordInterface
         $copyObj->setTag($this->getTag());
         $copyObj->setSource($this->getSource());
         $copyObj->setSourceId($this->getSourceId());
+        $copyObj->setCreatedAt($this->getCreatedAt());
+        $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1072,6 +1224,8 @@ abstract class Tags implements ActiveRecordInterface
         $this->tag = null;
         $this->source = null;
         $this->source_id = null;
+        $this->created_at = null;
+        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1103,6 +1257,20 @@ abstract class Tags implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(TagsTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     ChildTags The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[TagsTableMap::UPDATED_AT] = true;
+
+        return $this;
     }
 
     /**
