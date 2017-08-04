@@ -38,6 +38,7 @@ use Thelia\Type\TypeCollection;
  * @method string[] getTag()
  * @method string[] getExcludeTag()
  * @method string[] getOrder()
+ * @method string getTagMatchMode()
  */
 class Tags extends BaseLoop implements PropelSearchLoopInterface
 {
@@ -63,6 +64,11 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
             Argument::createIntListTypeArgument('exclude_source_id'),
             Argument::createAnyListTypeArgument('tag'),
             Argument::createAnyListTypeArgument('exclude_tag'),
+            new Argument(
+                'tag_match_mode',
+                new TypeCollection(new EnumType([ 'exact', 'partial' ])),
+                'exact'
+            ),
             new Argument(
                 'order',
                 new TypeCollection(
@@ -111,8 +117,14 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
             $query->filterByTag($excludeTag, Criteria::NOT_IN);
         }
 
-        if (null !== $tag = $this->getTag()) {
-            $query->filterByTag($tag, Criteria::IN);
+        if (null !== $tags = $this->getTag()) {
+            if ('exact' === $this->getTagMatchMode()) {
+                $query->filterByTag($tags, Criteria::IN);
+            } else {
+                foreach ($tags as $tag) {
+                    $query->filterByTag("%$tag%", Criteria::LIKE);
+                }
+            }
         }
 
         $orderList = $this->getOrder();

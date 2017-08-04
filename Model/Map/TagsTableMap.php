@@ -153,7 +153,7 @@ class TagsTableMap extends TableMap
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('TAG', 'Tag', 'VARCHAR', false, 255, null);
-        $this->addColumn('SOURCE', 'Source', 'CLOB', false, null, null);
+        $this->addColumn('SOURCE', 'Source', 'VARCHAR', false, 64, null);
         $this->addColumn('SOURCE_ID', 'SourceId', 'INTEGER', false, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);

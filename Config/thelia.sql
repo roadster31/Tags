@@ -13,7 +13,7 @@ CREATE TABLE `tags`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `tag` VARCHAR(255),
-    `source` LONGTEXT,
+    `source` VARCHAR(64),
     `source_id` INTEGER,
     `created_at` DATETIME,
     `updated_at` DATETIME,

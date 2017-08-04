@@ -30,9 +30,15 @@ class Tags extends BaseModule
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
     {
-        if (version_compare($currentVersion, '1.2.0') == -1) {
-            $database = new Database($con->getWrappedConnection());
+        $database = new Database($con->getWrappedConnection());
+
+        if (version_compare($currentVersion, '1.2.0') === -1) {
             $database->insertSql(null, array(__DIR__ . '/Config/update1.1.sql'));
+        }
+
+        // 1.2.1 database update
+        if (version_compare($newVersion, '1.2.1') === 0) {
+            $database->insertSql(null, array(__DIR__ . '/Config/update1.2.1.sql'));
         }
     }
 }

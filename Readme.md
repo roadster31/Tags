@@ -35,6 +35,12 @@ Le paramètre tag peut prendre un ou plusieurs valeurs, vous pouvez donc remonte
     {loop type="content" name="my-specific-content" tag='mon-ta-1,montag-2,...'} ... {/loop}
 ```
 
+Vous pouvez indiquer le type de comparaison qui sera effectuée sur les tags avec le paramètre
+`tag_match_mode`, qui peut prendre les valeurs suivantes :
+- `exact` (par défaut) : la boucle recherche les tags qui sont exactement identiques aux tags demandés
+- `partial` : la boucle recherche les tags qui sont contiennent tout ou partie des tags demandés, par exemple si le tag 'rou' est demandé, la boucle remontera les objets possédant les tags 'rouge', 'rouge' ou 'trou'
+
+
 ## Back-office
 
 Le module ajoute un entrée 'Tags' dans le menu Outils du back-office, qui vous donne accès à la liste de tous les tags
@@ -53,6 +59,7 @@ définis sur les produits, catégories, contenus et dossiers.
 |**exclude_source_id** | Identifiants des objets associés à exclure des résultats |
 |**tag** | Tags à rechercher |
 |**exclude_tag** | Tags à exclure des résultats |
+|**tag_match_mode** | Mode de comparaison des tags. Peut prendre les valeurs suivantes:<ul><li>- `exact` (par défaut) : la boucle recherche les tags qui sont exactement identiques aux tags demandés</li><li>- `partial` : la boucle recherche les tags qui sont contiennent tout ou partie des tags demandés, par exemple si le tag 'rou' est demandé, la boucle remontera les objets possédant les tags 'rouge', 'rouge' ou 'trou'</li></ul>|
 |**order** | Classement des résulats. Les valeurs possibles sont : `id`, `id-reverse`, `alpha`, `alpha-reverse`, `source`, `source-reverse`, `source-id`, `source-id-reverse`, `random`|
 
 ### Variables retournées
@@ -63,6 +70,8 @@ définis sur les produits, catégories, contenus et dossiers.
 |SOURCE | le type d'objet auquel ce tag est associé. Les valeurs possible sont `product`, `category`, `content` ou `folder` |
 |SOURCE_ID | Identifiant de l'objet source |
 |TAG    | valeur du tag, telle qu'elle a été indiquée dans le back-office  |
+|CREATED_AT| Date de creation du tag  |
+|UPDATED_AT| Date de dernière mise à jour du tag  |
 
 ### Exemple
 
