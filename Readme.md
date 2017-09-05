@@ -1,6 +1,6 @@
 # Tags
 
-Ce module permet d'ajouter un ou plusieurs tags à vos produits, catégories, contenus et dossiers. 
+Ce module permet d'ajouter un ou plusieurs tags à vos produits, catégories, contenus, dossiers et marques.
 Vous pouvez alors retrouver facilement l'objet associé à un tag à l'aide de la boucle du module.
 
 Typiquement, au lieu d'utiliser dans vos templates :
@@ -23,7 +23,7 @@ Vous évitez ainsi de mettre des ID en dur dans votre code. C'est l'une des util
 en existe surement bien d'autres.
 
 À partir de la version 1.1 du module, vous pouvez utiliser directement le paramètre `tag` dans les boucles `product`, 
-`content`, `folder` et `category`. C'est une requête d'économisée !
+`content`, `folder`, `category` et `brand`. C'est une requête d'économisée !
 
 ```
     {loop type="content" name="my-specific-content" tag='mon-contenu-special'} ... {/loop}
@@ -32,7 +32,7 @@ en existe surement bien d'autres.
 Le paramètre tag peut prendre un ou plusieurs valeurs, vous pouvez donc remonter les objets désignés par plusieurs tags :
 
 ```
-    {loop type="content" name="my-specific-content" tag='mon-ta-1,montag-2,...'} ... {/loop}
+    {loop type="product" name="my-specific-product" tag='mon-tag-1,montag-2,...'} ... {/loop}
 ```
 
 Vous pouvez indiquer le type de comparaison qui sera effectuée sur les tags avec le paramètre
@@ -53,8 +53,8 @@ définis sur les produits, catégories, contenus et dossiers.
 |Argument |Description |
 |---      |--- |
 |**id** | Retourne le tag ayant cet ID |
-|**source** | Source des objets associés. Les valeurs possibles sont `product`, `category`, `content`, `folder` |
-|**exclude_source** | Source des objets associés à exclure des résultats. Les valeurs possibles sont `product`, `category`, `content`, `folder` |
+|**source** | Source des objets associés. Les valeurs possibles sont `product`, `category`, `content`, `folder`, `brand` |
+|**exclude_source** | Source des objets associés à exclure des résultats. Les valeurs possibles sont `product`, `category`, `content`, `folder`, `brand` |
 |**source_id** | Identifiants des objets associés |
 |**exclude_source_id** | Identifiants des objets associés à exclure des résultats |
 |**tag** | Tags à rechercher |
@@ -67,7 +67,7 @@ définis sur les produits, catégories, contenus et dossiers.
 |Variable   |Description |
 |---        |--- |
 |ID    | Identifiant du tag |
-|SOURCE | le type d'objet auquel ce tag est associé. Les valeurs possible sont `product`, `category`, `content` ou `folder` |
+|SOURCE | le type d'objet auquel ce tag est associé. Les valeurs possible sont `product`, `category`, `content`, `folder` ou `brand` |
 |SOURCE_ID | Identifiant de l'objet source |
 |TAG    | valeur du tag, telle qu'elle a été indiquée dans le back-office  |
 |CREATED_AT| Date de creation du tag  |
