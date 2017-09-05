@@ -11,6 +11,7 @@
         {include file="tags-includes/tag-list.inc.html" source='category' label={intl l="Categories" d="tags.bo"} url={url path="/admin/categories/update" category_id='__ID__'}}
         {include file="tags-includes/tag-list.inc.html" source='content'  label={intl l="Contents" d="tags.bo"}   url={url path="/admin/content/update/__ID__"}}
         {include file="tags-includes/tag-list.inc.html" source='folder'   label={intl l="Folders" d="tags.bo"}    url={url path="/admin/folders/update/__ID__"}}
+        {include file="tags-includes/tag-list.inc.html" source='brand'   label={intl l="Brands" d="tags.bo"}    url={url path="/admin/brand/update/__ID__"}}
 
         {if $orphans}
             <div class="pull-right">

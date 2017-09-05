@@ -18,6 +18,8 @@ use Tags\Model\Map\TagsTableMap;
 use Tags\Model\TagsQuery;
 use Tags\Tags;
 use Thelia\Core\Event\ActionEvent;
+use Thelia\Core\Event\Brand\BrandDeleteEvent;
+use Thelia\Core\Event\Brand\BrandEvent;
 use Thelia\Core\Event\Category\CategoryDeleteEvent;
 use Thelia\Core\Event\Category\CategoryEvent;
 use Thelia\Core\Event\Content\ContentDeleteEvent;
@@ -32,6 +34,7 @@ use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Event\TheliaFormEvent;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Translation\Translator;
+use Thelia\Model\Map\BrandTableMap;
 use Thelia\Model\Map\CategoryTableMap;
 use Thelia\Model\Map\ContentTableMap;
 use Thelia\Model\Map\FolderTableMap;
@@ -49,6 +52,7 @@ class EventManager implements EventSubscriberInterface
             TheliaEvents::CATEGORY_DELETE => [ 'deleteCategory' ],
             TheliaEvents::CONTENT_DELETE  => [ 'deleteContent' ],
             TheliaEvents::FOLDER_DELETE   => [ 'deleteFolder' ],
+            TheliaEvents::BRAND_DELETE    => [ 'deleteBrand' ],
 
             TheliaEvents::FORM_BEFORE_BUILD . ".thelia_product_creation" => ['addFieldToForm', 128],
             TheliaEvents::FORM_BEFORE_BUILD . ".thelia_product_modification" => ['addFieldToForm', 128],
@@ -58,6 +62,8 @@ class EventManager implements EventSubscriberInterface
             TheliaEvents::FORM_BEFORE_BUILD . ".thelia_category_modification" => ['addFieldToForm', 128],
             TheliaEvents::FORM_BEFORE_BUILD . ".thelia_folder_creation" => ['addFieldToForm', 128],
             TheliaEvents::FORM_BEFORE_BUILD . ".thelia_folder_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_brand_creation" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_brand_modification" => ['addFieldToForm', 128],
 
             TheliaEvents::PRODUCT_UPDATE  => ['processProductFields', 100],
             TheliaEvents::PRODUCT_CREATE  => ['processProductFields', 100],
@@ -71,15 +77,20 @@ class EventManager implements EventSubscriberInterface
             TheliaEvents::CONTENT_CREATE  => ['processContentFields', 100],
             TheliaEvents::CONTENT_UPDATE  => ['processContentFields', 100],
 
+            TheliaEvents::BRAND_CREATE  => ['processBrandFields', 100],
+            TheliaEvents::BRAND_UPDATE  => ['processBrandFields', 100],
+
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'content') => ['addLoopArgDefinition', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'product') => ['addLoopArgDefinition', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'folder') => ['addLoopArgDefinition', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'category') => ['addLoopArgDefinition', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'brand') => ['addLoopArgDefinition', 128],
 
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'content') => ['contentLoopBuildModelCriteria', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'product') => ['productLoopBuildModelCriteria', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'folder')  => ['folderLoopBuildModelCriteria', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'category') => ['categoryLoopBuildModelCriteria', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'brand') => ['brandLoopBuildModelCriteria', 128],
         ];
     }
 
@@ -115,6 +126,11 @@ class EventManager implements EventSubscriberInterface
     public function folderLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
     {
         $this->setupLoopBuildModelCriteria(FolderTableMap::ID, 'folder', $event);
+    }
+
+    public function brandLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $this->setupLoopBuildModelCriteria(BrandTableMap::ID, 'brand', $event);
     }
 
     protected function setupLoopBuildModelCriteria($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
@@ -221,6 +237,13 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
+    public function processBrandFields(BrandEvent $event)
+    {
+        if ($event->hasBrand()) {
+            $this->processTags($event, 'brand', $event->getBrand()->getId());
+        }
+    }
+
     public function deleteProduct(ProductDeleteEvent $event)
     {
         TagsQuery::create()->filterBySource('product')->filterBySourceId($event->getProductId())->delete();
@@ -239,5 +262,10 @@ class EventManager implements EventSubscriberInterface
     public function deleteFolder(FolderDeleteEvent $event)
     {
         TagsQuery::create()->filterBySource('content')->filterBySourceId($event->getFolderId())->delete();
+    }
+
+    public function deleteBrand(BrandDeleteEvent $event)
+    {
+        TagsQuery::create()->filterBySource('brand')->filterBySourceId($event->getBrandId())->delete();
     }
 }

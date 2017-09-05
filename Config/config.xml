@@ -31,6 +31,9 @@
         <hook id="tags.folder_edit.hook" class="Tags\Hook\HookManager" scope="request">
             <tag name="hook.event_listener" event="folder.modification.form-right.bottom" type="back" method="onFolderEditRightColumnBottom" />
         </hook>
+        <hook id="tags.brand_edit.hook" class="Tags\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="brand.modification.form-right.bottom" type="back" method="onBrandEditRightColumnBottom" />
+        </hook>
 
         <hook id="tags.configuration.hook" class="Tags\Hook\HookManager" scope="request">
             <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />

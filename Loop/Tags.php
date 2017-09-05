@@ -51,13 +51,13 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
             new Argument(
                 'source',
                 new TypeCollection(
-                    new EnumType([ 'product', 'category', 'content', 'folder' ])
+                    new EnumType([ 'product', 'category', 'content', 'folder', 'brand' ])
                 )
             ),
             new Argument(
                 'exclude_source',
                 new TypeCollection(
-                    new EnumType([ 'product', 'category', 'content', 'folder' ])
+                    new EnumType([ 'product', 'category', 'content', 'folder', 'brand' ])
                 )
             ),
             Argument::createIntListTypeArgument('source_id'),

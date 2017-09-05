@@ -38,7 +38,7 @@ class HookManager extends BaseHook
             ]
         );
     }
-    
+
     private function processFieldHook(HookRenderEvent $event, $sourceType, $sourceId)
     {
         $tags = TagsQuery::create()
@@ -62,7 +62,7 @@ class HookManager extends BaseHook
             )
         );
     }
-    
+
     public function onModuleConfiguration(HookRenderEvent $event)
     {
         $event->add(
@@ -88,5 +88,10 @@ class HookManager extends BaseHook
     public function onFolderEditRightColumnBottom(HookRenderEvent $event)
     {
         $this->processFieldHook($event, 'folder', $event->getArgument('folder_id'));
+    }
+
+    public function onBrandEditRightColumnBottom(HookRenderEvent $event)
+    {
+        $this->processFieldHook($event, 'brand', $event->getArgument('brand_id'));
     }
 }
