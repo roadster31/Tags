@@ -4,23 +4,23 @@
 <div class="row">
     <div class="col-md-12 general-block-decorator">
         <div class="title">
-            {intl d='tags.bo' l="List of existing tags"}
+            {intl d='tags.bo.default' l="List of existing tags"}
         </div>
 
-        {include file="tags-includes/tag-list.inc.html" source='product'  label={intl l="Products" d="tags.bo"}   url={url path="/admin/products/update" product_id='__ID__'}}
-        {include file="tags-includes/tag-list.inc.html" source='category' label={intl l="Categories" d="tags.bo"} url={url path="/admin/categories/update" category_id='__ID__'}}
-        {include file="tags-includes/tag-list.inc.html" source='content'  label={intl l="Contents" d="tags.bo"}   url={url path="/admin/content/update/__ID__"}}
-        {include file="tags-includes/tag-list.inc.html" source='folder'   label={intl l="Folders" d="tags.bo"}    url={url path="/admin/folders/update/__ID__"}}
-        {include file="tags-includes/tag-list.inc.html" source='brand'   label={intl l="Brands" d="tags.bo"}    url={url path="/admin/brand/update/__ID__"}}
+        {include file="tags-includes/tag-list.inc.html" source='product'  label={intl l="Products" d="tags.bo.default"}   url={url path="/admin/products/update" product_id='__ID__'}}
+        {include file="tags-includes/tag-list.inc.html" source='category' label={intl l="Categories" d="tags.bo.default"} url={url path="/admin/categories/update" category_id='__ID__'}}
+        {include file="tags-includes/tag-list.inc.html" source='content'  label={intl l="Contents" d="tags.bo.default"}   url={url path="/admin/content/update/__ID__"}}
+        {include file="tags-includes/tag-list.inc.html" source='folder'   label={intl l="Folders" d="tags.bo.default"}    url={url path="/admin/folders/update/__ID__"}}
+        {include file="tags-includes/tag-list.inc.html" source='brand'   label={intl l="Brands" d="tags.bo.default"}    url={url path="/admin/brand/update/__ID__"}}
 
         {if $orphans}
             <div class="pull-right">
-                <a class="btn btn-primary" href="{url path='/admin/tags/fix-orphans'}">{intl d='tags.bo' l='Fix orphan tags'}</a>
+                <a class="btn btn-primary" href="{url path='/admin/tags/fix-orphans'}">{intl d='tags.bo.default' l='Fix orphan tags'}</a>
             </div>
         {/if}
 
         {if $nothing == true}
-            <div class="alert alert-info">{intl d='tags.bo' l="No tag is defined yet."}</div>
+            <div class="alert alert-info">{intl d='tags.bo.default' l="No tag is defined yet."}</div>
         {/if}
     </div>
 </div>

@@ -4,9 +4,9 @@
             <caption class="clearfix">{$label}</caption>
             <thead>
             <tr>
-                <th>{intl d='tags.bo' l="Tag"}</th>
-                <th>{intl d='tags.bo' l="ID"}</th>
-                <th>{intl d='tags.bo' l="Title"}</th>
+                <th>{intl d='tags.bo.default' l="Tag"}</th>
+                <th>{intl d='tags.bo.default' l="ID"}</th>
+                <th>{intl d='tags.bo.default' l="Title"}</th>
             </tr>
             </thead>
             <tbody>
@@ -22,7 +22,7 @@
                     {/ifloop}
                     {elseloop rel="info"}
                         {$orphans = true scope=parent}
-                        <td colspan="2" class="text-danger">{intl d='tags.bo' l="Orphaned tag. The related object (Id=%id) is missing." id=$SOURCE_ID}</td>
+                        <td colspan="2" class="text-danger">{intl d='tags.bo.default' l="Orphaned tag. The related object (Id=%id) is missing." id=$SOURCE_ID}</td>
                     {/elseloop}
                 </tr>
             {/loop}
