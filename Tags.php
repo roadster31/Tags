@@ -13,6 +13,7 @@
 namespace Tags;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Tags\Model\TagsQuery;
 use Thelia\Install\Database;
 use Thelia\Module\BaseModule;
 
@@ -23,8 +24,13 @@ class Tags extends BaseModule
 
     public function postActivation(ConnectionInterface $con = null)
     {
-        $database = new Database($con->getWrappedConnection());
-        $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
+        // Créer la base de données si elle n'existe pas
+        try {
+            TagsQuery::create()->findOne();
+        } catch (\Exception $ex) {
+            $database = new Database($con->getWrappedConnection());
+            $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
+        }
     }
 
 
