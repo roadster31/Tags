@@ -1,0 +1,25 @@
+{if isset($imageId)}
+    {$id = $imageId}
+    {$objectType = $imageType}
+    {$type = "image"}
+{/if}
+
+{if isset($documentId)}
+    {$id = $documentId}
+    {$objectType = $documentType}
+    {$type = "document"}
+{/if}
+
+{$data = ""}
+{loop type="tags" name="getTag.loop" source="{$objectType}_{$type}" source_id="{$id}"}
+    {if $LOOP_COUNT !== 1}
+        {$data = $data|cat:", "}
+    {/if}
+    {$data = $data|cat:$TAG}
+{/loop}
+
+<div id="tagContainer" class="form-group">
+    <label class="control-label" for="tags">{intl l="Tags" d="tags.bo.default"}</label>
+    <input id="tags" type="text" name="thelia_{$objectType}_{$type}_modification[tags]" class="form-control" value="{$data}">
+    <span class="help-block">{intl l="Enter one or more tags, separated by commas." d="tags.bo.default"}</span>
+</div>

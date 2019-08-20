@@ -94,4 +94,15 @@ class HookManager extends BaseHook
     {
         $this->processFieldHook($event, 'brand', $event->getArgument('brand_id'));
     }
+
+    public function addTagFieldJs(HookRenderEvent $event)
+    {
+        $imageJs = $this->addJS("tags-includes/assets/js/addFieldInForm.js", []);
+        $event->add($imageJs);
+    }
+
+    public function hiddenTagTemplate(HookRenderEvent $event)
+    {
+        $event->add($this->render("tags-includes/tag-field.html"));
+    }
 }

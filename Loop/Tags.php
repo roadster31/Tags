@@ -51,13 +51,27 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
             new Argument(
                 'source',
                 new TypeCollection(
-                    new EnumType([ 'product', 'category', 'content', 'folder', 'brand' ])
+                    new EnumType(
+                        [
+                            'product', 'category', 'content', 'folder', 'brand',
+                            'product_image','product_document', 'category_image','category_document',
+                            'content_image','content_document', 'folder_image','folder_document',
+                            'brand_image','brand_document'
+                        ]
+                    )
                 )
             ),
             new Argument(
                 'exclude_source',
                 new TypeCollection(
-                    new EnumType([ 'product', 'category', 'content', 'folder', 'brand' ])
+                    new EnumType(
+                        [
+                            'product', 'category', 'content', 'folder', 'brand',
+                            'product_image','product_document', 'category_image','category_document',
+                            'content_image','content_document', 'folder_image','folder_document',
+                            'brand_image','brand_document'
+                        ]
+                    )
                 )
             ),
             Argument::createIntListTypeArgument('source_id'),
@@ -98,7 +112,7 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
         }
 
         if (null !== $source = $this->getSource()) {
-            $query->filterBySource($source);
+            $query->filterBySource($source, Criteria::IN);
         }
 
         if (null !== $excludeSource = $this->getExcludeSource()) {

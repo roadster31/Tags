@@ -13,7 +13,6 @@
 namespace Tags;
 
 use Propel\Runtime\Connection\ConnectionInterface;
-use Tags\Model\TagsQuery;
 use Thelia\Install\Database;
 use Thelia\Module\BaseModule;
 

@@ -13,6 +13,7 @@
 namespace Tags\EventListeners;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Join;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Tags\Model\Map\TagsTableMap;
 use Tags\Model\TagsQuery;
@@ -24,6 +25,7 @@ use Thelia\Core\Event\Category\CategoryDeleteEvent;
 use Thelia\Core\Event\Category\CategoryEvent;
 use Thelia\Core\Event\Content\ContentDeleteEvent;
 use Thelia\Core\Event\Content\ContentEvent;
+use Thelia\Core\Event\File\FileCreateOrUpdateEvent;
 use Thelia\Core\Event\Folder\FolderDeleteEvent;
 use Thelia\Core\Event\Folder\FolderEvent;
 use Thelia\Core\Event\Loop\LoopExtendsArgDefinitionsEvent;
@@ -32,12 +34,24 @@ use Thelia\Core\Event\Product\ProductDeleteEvent;
 use Thelia\Core\Event\Product\ProductEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Event\TheliaFormEvent;
+use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Translation\Translator;
+use Thelia\Model\Map\BrandDocumentTableMap;
+use Thelia\Model\Map\BrandImageTableMap;
 use Thelia\Model\Map\BrandTableMap;
+use Thelia\Model\Map\CategoryDocumentTableMap;
+use Thelia\Model\Map\CategoryImageTableMap;
 use Thelia\Model\Map\CategoryTableMap;
+use Thelia\Model\Map\ContentDocumentTableMap;
+use Thelia\Model\Map\ContentImageTableMap;
 use Thelia\Model\Map\ContentTableMap;
+use Thelia\Model\Map\FolderDocumentTableMap;
+use Thelia\Model\Map\FolderImageTableMap;
 use Thelia\Model\Map\FolderTableMap;
+use Thelia\Model\Map\ProductDocumentTableMap;
+use Thelia\Model\Map\ProductImageTableMap;
+use Thelia\Model\Map\ProductSaleElementsProductImageTableMap;
 use Thelia\Model\Map\ProductTableMap;
 use Thelia\Tools\URL;
 use Thelia\Type\EnumType;
@@ -45,6 +59,13 @@ use Thelia\Type\TypeCollection;
 
 class EventManager implements EventSubscriberInterface
 {
+    protected $request;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
     public static function getSubscribedEvents()
     {
         return [
@@ -65,6 +86,18 @@ class EventManager implements EventSubscriberInterface
             TheliaEvents::FORM_BEFORE_BUILD . ".thelia_brand_creation" => ['addFieldToForm', 128],
             TheliaEvents::FORM_BEFORE_BUILD . ".thelia_brand_modification" => ['addFieldToForm', 128],
 
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_product_image_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_category_image_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_content_image_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_folder_image_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_brand_image_modification" => ['addFieldToForm', 128],
+
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_product_document_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_category_document_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_content_document_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_folder_document_modification" => ['addFieldToForm', 128],
+            TheliaEvents::FORM_BEFORE_BUILD . ".thelia_brand_document_modification" => ['addFieldToForm', 128],
+
             TheliaEvents::PRODUCT_UPDATE  => ['processProductFields', 100],
             TheliaEvents::PRODUCT_CREATE  => ['processProductFields', 100],
 
@@ -80,32 +113,46 @@ class EventManager implements EventSubscriberInterface
             TheliaEvents::BRAND_CREATE  => ['processBrandFields', 100],
             TheliaEvents::BRAND_UPDATE  => ['processBrandFields', 100],
 
+            TheliaEvents::IMAGE_UPDATE => ['processImageFields', 100],
+
+            TheliaEvents::DOCUMENT_UPDATE => ['processDocumentFields', 100],
+
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'content') => ['addLoopArgDefinition', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'product') => ['addLoopArgDefinition', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'folder') => ['addLoopArgDefinition', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'category') => ['addLoopArgDefinition', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'brand') => ['addLoopArgDefinition', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'image') => ['addLoopArgDefinition', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_ARG_DEFINITIONS, 'document') => ['addLoopArgDefinition', 128],
 
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'content') => ['contentLoopBuildModelCriteria', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'product') => ['productLoopBuildModelCriteria', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'folder')  => ['folderLoopBuildModelCriteria', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'category') => ['categoryLoopBuildModelCriteria', 128],
             TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'brand') => ['brandLoopBuildModelCriteria', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'image') => ['imageLoopBuildModelCriteria', 128],
+            TheliaEvents::getLoopExtendsEvent(TheliaEvents::LOOP_EXTENDS_BUILD_MODEL_CRITERIA, 'document') => ['documentLoopBuildModelCriteria', 128],
         ];
     }
 
     public function addLoopArgDefinition(LoopExtendsArgDefinitionsEvent $event)
     {
         $argument = $event->getArgumentCollection();
-        $argument->addArgument(
-            Argument::createAnyListTypeArgument('tag')
-        )->addArgument(
-            new Argument(
-                'tag_match_mode',
-                new TypeCollection(new EnumType([ 'exact', 'partial' ])),
-                'exact'
+        $argument
+            ->addArgument(
+                Argument::createAnyListTypeArgument('tag')
             )
-        );
+            ->addArgument(
+                Argument::createAnyListTypeArgument('exclude_tag')
+            )
+            ->addArgument(
+                new Argument(
+                    'tag_match_mode',
+                    new TypeCollection(new EnumType([ 'exact', 'partial' ])),
+                    'exact'
+                )
+            )
+        ;
     }
 
     public function contentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
@@ -133,16 +180,68 @@ class EventManager implements EventSubscriberInterface
         $this->setupLoopBuildModelCriteria(BrandTableMap::ID, 'brand', $event);
     }
 
+    public function imageLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        switch ($event->getLoop()->getArgumentCollection()->get('source')->getValue()) {
+            case 'product':
+                $this->setupLoopBuildModelCriteria(ProductImageTableMap::ID, 'product_image', $event);
+                break;
+            case 'category':
+                $this->setupLoopBuildModelCriteria(CategoryImageTableMap::ID, 'category_image', $event);
+                break;
+            case 'content':
+                $this->setupLoopBuildModelCriteria(ContentImageTableMap::ID, 'content_image', $event);
+                break;
+            case 'folder':
+                $this->setupLoopBuildModelCriteria(FolderImageTableMap::ID, 'folder_image', $event);
+                break;
+            case 'brand':
+                $this->setupLoopBuildModelCriteria(BrandImageTableMap::ID, 'brand_image', $event);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public function documentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        switch ($event->getLoop()->getArgumentCollection()->get('source')->getValue()) {
+            case 'product':
+                $this->setupLoopBuildModelCriteria(ProductDocumentTableMap::ID, 'product_document', $event);
+                break;
+            case 'category':
+                $this->setupLoopBuildModelCriteria(CategoryDocumentTableMap::ID, 'category_document', $event);
+                break;
+            case 'content':
+                $this->setupLoopBuildModelCriteria(ContentDocumentTableMap::ID, 'content_document', $event);
+                break;
+            case 'folder':
+                $this->setupLoopBuildModelCriteria(FolderDocumentTableMap::ID, 'folder_document', $event);
+                break;
+            case 'brand':
+                $this->setupLoopBuildModelCriteria(BrandDocumentTableMap::ID, 'brand_document', $event);
+                break;
+            default:
+                break;
+        }
+    }
+
     protected function setupLoopBuildModelCriteria($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $this->handleTagArgument($leftTableFieldName, $loopType, $event);
+        $this->handleExcludeTagArgument($leftTableFieldName, $loopType, $event);
+    }
+
+    protected function handleTagArgument($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
     {
         $tags = $event->getLoop()->getArgumentCollection()->get('tag')->getValue();
 
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             $search = $event->getModelCriteria();
 
             $search
                 ->addJoin($leftTableFieldName, TagsTableMap::SOURCE_ID, Criteria::LEFT_JOIN) // Can also be left/right
-                ->add(TagsTableMap::SOURCE, $loopType, Criteria::EQUAL);
+                ->add(TagsTableMap::SOURCE, $loopType, Criteria::EQUAL)
             ;
 
             $matchMode = $event->getLoop()->getArgumentCollection()->get('tag_match_mode')->getValue();
@@ -154,6 +253,37 @@ class EventManager implements EventSubscriberInterface
                     $search->add(TagsTableMap::TAG, "%$tag%", Criteria::LIKE);
                 }
             }
+        }
+    }
+
+    protected function handleExcludeTagArgument($leftTableId, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
+    {
+        $excludeTags = $event->getLoop()->getArgumentCollection()->get('exclude_tag')->getValue();
+
+        if (!empty($excludeTags)) {
+            $search = $event->getModelCriteria();
+
+            $tagJoin = new Join($leftTableId, TagsTableMap::SOURCE_ID, Criteria::LEFT_JOIN);
+
+            $search
+                ->addJoinObject($tagJoin, 'any_table_tags_join')
+                ->addJoinCondition(
+                    'any_table_tags_join',
+                    '('
+                    . TagsTableMap::SOURCE . Criteria::EQUAL . ' \'' . $loopType . '\' '
+                    . Criteria::LOGICAL_OR . ' '
+                    . TagsTableMap::SOURCE . Criteria::ISNULL
+                    . ') '
+                )
+            ;
+
+            $search->where(
+                ' ('
+                . TagsTableMap::TAG . Criteria::NOT_IN . ' (\'' . implode("','", $excludeTags) . '\') '
+                . Criteria::LOGICAL_OR . ' '
+                . TagsTableMap::TAG . Criteria::ISNULL
+                . ')'
+            );
         }
     }
 
@@ -244,6 +374,66 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
+    public function processImageFields(FileCreateOrUpdateEvent $event)
+    {
+        if (null !== $model = $event->getModel()) {
+            switch (get_class($model)) {
+                case 'Thelia\Model\ProductImage':
+                    $event->tags = $this->request->request->get('thelia_product_image_modification')['tags'];
+                    $this->processTags($event, 'product_image', $model->getId());
+                    break;
+                case 'Thelia\Model\CategoryImage':
+                    $event->tags = $this->request->request->get('thelia_category_image_modification')['tags'];
+                    $this->processTags($event, 'category_image', $model->getId());
+                    break;
+                case 'Thelia\Model\ContentImage':
+                    $event->tags = $this->request->request->get('thelia_content_image_modification')['tags'];
+                    $this->processTags($event, 'content_image', $model->getId());
+                    break;
+                case 'Thelia\Model\FolderImage':
+                    $event->tags = $this->request->request->get('thelia_folder_image_modification')['tags'];
+                    $this->processTags($event, 'folder_image', $model->getId());
+                    break;
+                case 'Thelia\Model\BrandImage':
+                    $event->tags = $this->request->request->get('thelia_brand_image_modification')['tags'];
+                    $this->processTags($event, 'brand_image', $model->getId());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public function processDocumentFields(FileCreateOrUpdateEvent $event)
+    {
+        if (null !== $model = $event->getModel()) {
+            switch (get_class($model)) {
+                case 'Thelia\Model\ProductDocument':
+                    $event->tags = $this->request->request->get('thelia_product_document_modification')['tags'];
+                    $this->processTags($event, 'product_document', $model->getId());
+                    break;
+                case 'Thelia\Model\CategoryDocument':
+                    $event->tags = $this->request->request->get('thelia_category_document_modification')['tags'];
+                    $this->processTags($event, 'category_document', $model->getId());
+                    break;
+                case 'Thelia\Model\ContentDocument':
+                    $event->tags = $this->request->request->get('thelia_content_document_modification')['tags'];
+                    $this->processTags($event, 'content_document', $model->getId());
+                    break;
+                case 'Thelia\Model\FolderDocument':
+                    $event->tags = $this->request->request->get('thelia_folder_document_modification')['tags'];
+                    $this->processTags($event, 'folder_document', $model->getId());
+                    break;
+                case 'Thelia\Model\BrandDocument':
+                    $event->tags = $this->request->request->get('thelia_brand_document_modification')['tags'];
+                    $this->processTags($event, 'brand_document', $model->getId());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     public function deleteProduct(ProductDeleteEvent $event)
     {
         TagsQuery::create()->filterBySource('product')->filterBySourceId($event->getProductId())->delete();
@@ -261,7 +451,7 @@ class EventManager implements EventSubscriberInterface
 
     public function deleteFolder(FolderDeleteEvent $event)
     {
-        TagsQuery::create()->filterBySource('content')->filterBySourceId($event->getFolderId())->delete();
+        TagsQuery::create()->filterBySource('folder')->filterBySourceId($event->getFolderId())->delete();
     }
 
     public function deleteBrand(BrandDeleteEvent $event)
