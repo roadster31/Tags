@@ -49,8 +49,8 @@ The module adds an entry 'Tags' in the Tools menu in back office, which give you
 |Argument |Description |
 |---      |--- |
 |**id** | Return tag with this ID |
-|**source** | Source of associated objects . the possibles values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
-|**exclude_source** | Source of associated objects to exclude from the result. the possibles values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
+|**source** | Source of associated objects. The possibles values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
+|**exclude_source** | Source of associated objects to exclude from the result. The possibles values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
 |**source_id** | ID of associated objects |
 |**exclude_source_id** | ID of associated objects to exclude from the result |
 |**tag** | Tags to search |
