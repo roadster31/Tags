@@ -13,7 +13,7 @@
         <language>en_US</language>
         <language>fr_FR</language>
     </languages>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
     <authors>
         <author>
             <name>Franck Allimant</name>
@@ -23,6 +23,6 @@
         </author>
     </authors>
     <type>classic</type>
-    <thelia>2.3.1</thelia>
+    <thelia>2.3.0</thelia>
     <stability>other</stability>
 </module>

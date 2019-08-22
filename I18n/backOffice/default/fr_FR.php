@@ -1,15 +1,27 @@
 <?php
 
 return array(
+    'Brand documents' => 'Documents des marques',
+    'Brand images' => 'Images des marques',
+    'Brands' => 'Marques',
     'Categories' => 'Catégories',
+    'Category documents' => 'Documents des categories',
+    'Category images' => 'Images des categories',
+    'Content documents' => 'Documents des contenus',
+    'Content images' => 'Images des contenus',
     'Contents' => 'Contenus',
     'Fix orphan tags' => 'Supprimer les tags orphelins',
+    'Folder documents' => 'Documents des dossiers',
+    'Folder images' => 'Images des dossiers',
     'Folders' => 'Dossiers',
     'ID' => 'ID',
     'List of existing tags' => 'Liste des tags existants',
-    'No tag is defined yet.' => 'Aucu tag n\'a encore été défini.',
+    'No tag is defined yet.' => 'Aucun tag n\'a encore été défini.',
     'Orphaned tag. The related object (Id=%id) is missing.' => 'Ce tag est orphelin. L\'objet associé (Id=%id) n\'existe pas.',
+    'Product documents' => 'Documents des produits',
+    'Product images' => 'Images des produits',
     'Products' => 'Produits',
     'Tag' => 'Tags',
+    'Tags' => 'Tags',
     'Title' => 'Titre',
 );

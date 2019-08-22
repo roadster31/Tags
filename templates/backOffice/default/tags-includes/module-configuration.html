@@ -11,7 +11,74 @@
         {include file="tags-includes/tag-list.inc.html" source='category' label={intl l="Categories" d="tags.bo.default"} url={url path="/admin/categories/update" category_id='__ID__'}}
         {include file="tags-includes/tag-list.inc.html" source='content'  label={intl l="Contents" d="tags.bo.default"}   url={url path="/admin/content/update/__ID__"}}
         {include file="tags-includes/tag-list.inc.html" source='folder'   label={intl l="Folders" d="tags.bo.default"}    url={url path="/admin/folders/update/__ID__"}}
-        {include file="tags-includes/tag-list.inc.html" source='brand'   label={intl l="Brands" d="tags.bo.default"}    url={url path="/admin/brand/update/__ID__"}}
+        {include file="tags-includes/tag-list.inc.html" source='brand'    label={intl l="Brands" d="tags.bo.default"}     url={url path="/admin/brand/update/__ID__"}}
+
+        {include file="tags-includes/tag-list.inc.html"
+            source='product'
+            type='image'
+            label={intl l="Product images" d="tags.bo.default"}
+            url={url path="/admin/image/type/product/__ID__/update"}
+        }
+        {include file="tags-includes/tag-list.inc.html"
+            source='product'
+            type='document'
+            label={intl l="Product documents" d="tags.bo.default"}
+            url={url path="/admin/document/type/product/__ID__/update"}
+        }
+
+        {include file="tags-includes/tag-list.inc.html"
+            source='category'
+            type='image'
+            label={intl l="Category images" d="tags.bo.default"}
+            url={url path="/admin/image/type/category/__ID__/update"}
+        }
+        {include file="tags-includes/tag-list.inc.html"
+            source='category'
+            type='document'
+            label={intl l="Category documents" d="tags.bo.default"}
+            url={url path="/admin/document/type/category/__ID__/update"}
+        }
+
+        {include file="tags-includes/tag-list.inc.html"
+            source='content'
+            type='image'
+            label={intl l="Content images" d="tags.bo.default"}
+            url={url path="/admin/image/type/content/__ID__/update"}
+        }
+        {include file="tags-includes/tag-list.inc.html"
+            source='content'
+            type='document'
+            label={intl l="Content documents" d="tags.bo.default"}
+            url={url path="/admin/document/type/content/__ID__/update"}
+        }
+
+        {include file="tags-includes/tag-list.inc.html"
+            source='folder'
+            type='image'
+            label={intl l="Folder images" d="tags.bo.default"}
+            url={url path="/admin/image/type/folder/__ID__/update"}
+        }
+        {include file="tags-includes/tag-list.inc.html"
+            source='folder'
+            type='document'
+            label={intl l="Folder documents" d="tags.bo.default"}
+            url={url path="/admin/document/type/folder/__ID__/update"}
+        }
+
+        {include file="tags-includes/tag-list.inc.html"
+            source='brand'
+            type='image'
+            label={intl l="Brand images" d="tags.bo.default"}
+            url={url path="/admin/image/type/brand/__ID__/update"}
+        }
+        {include file="tags-includes/tag-list.inc.html"
+            source='brand'
+            type='document'
+            label={intl l="Brand documents" d="tags.bo.default"}
+            url={url path="/admin/document/type/brand/__ID__/update"}
+        }
+
+
 
         {if $orphans}
             <div class="pull-right">
