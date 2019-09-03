@@ -18,11 +18,13 @@
 
 namespace Tags\Hook;
 
-use Tags\Model\Tags;
+use Tags\Model\Tags as TagsModel;
 use Tags\Model\TagsQuery;
+use Tags\Tags;
 use Thelia\Core\Event\Hook\HookRenderBlockEvent;
 use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
+use Thelia\Core\Translation\Translator;
 use Thelia\Tools\URL;
 
 class HookManager extends BaseHook
@@ -48,7 +50,7 @@ class HookManager extends BaseHook
 
         $tagValue = '';
 
-        /** @var Tags $tag */
+        /** @var TagsModel $tag */
         foreach ($tags as $tag) {
             $tagValue .= $tag->getTag() . ', ';
         }
@@ -93,5 +95,25 @@ class HookManager extends BaseHook
     public function onBrandEditRightColumnBottom(HookRenderEvent $event)
     {
         $this->processFieldHook($event, 'brand', $event->getArgument('brand_id'));
+    }
+
+    public function addTagFieldJs(HookRenderEvent $event)
+    {
+        $imageJs = $this->addJS("tags-includes/assets/js/addFieldInForm.js", []);
+        $event->add($imageJs);
+    }
+
+    public function hiddenTagTemplate(HookRenderEvent $event)
+    {
+        $help = Translator::getInstance()->trans('Enter one or more tags, separated by commas.', [],Tags::DOMAIN_NAME);
+        $url = URL::getInstance()->absoluteUrl('/admin/module/Tags');
+        $link = Translator::getInstance()->trans('View all defined tags', [],Tags::DOMAIN_NAME);
+        $event->add($this->render("tags-includes/tag-field.html",
+            [
+                'help' => $help,
+                'url' => $url,
+                'link' => $link
+            ]
+        ));
     }
 }

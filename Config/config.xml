@@ -11,6 +11,7 @@
     <services>
         <service id="tags.listener" class="Tags\EventListeners\EventManager" scope="request">
             <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="request"/>
         </service>
     </services>
 
@@ -33,6 +34,20 @@
         </hook>
         <hook id="tags.brand_edit.hook" class="Tags\Hook\HookManager" scope="request">
             <tag name="hook.event_listener" event="brand.modification.form-right.bottom" type="back" method="onBrandEditRightColumnBottom" />
+        </hook>
+
+        <hook id="tags.image_edit.hook" class="Tags\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="image.edit-js" type="back" method="addTagFieldJs" />
+        </hook>
+        <hook id="tags.image_edit_tpl.hook" class="Tags\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="image-edit.bottom" type="back" method="hiddenTagTemplate" />
+        </hook>
+
+        <hook id="tags.document_edit.hook" class="Tags\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="document.edit-js" type="back" method="addTagFieldJs" />
+        </hook>
+        <hook id="tags.document_edit_tpl.hook" class="Tags\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="document-edit.bottom" type="back" method="hiddenTagTemplate" />
         </hook>
 
         <hook id="tags.configuration.hook" class="Tags\Hook\HookManager" scope="request">

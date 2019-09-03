@@ -1,4 +1,9 @@
 {ifloop rel="tags-list"}
+    {$tagSource = $source}
+    {if isset($type)}
+        {$tagSource = $source|cat:"_"|cat:$type}
+    {/if}
+
     <div class="general-block-decorator">
         <table class="table table-striped table-condensed table-left-aligned">
             <caption class="clearfix">{$label}</caption>
@@ -10,15 +15,22 @@
             </tr>
             </thead>
             <tbody>
-            {loop type="tags" name="tags-list" source=$source order='alpha,source-id'}
+            {loop type="tags" name="tags-list" source=$tagSource order='alpha,source-id'}
                 {$nothing = false scope=parent}
                 <tr>
                     <td>{$TAG}</td>
                     {ifloop rel="info"}
-                        {loop name="info" type=$source backend_context=1 visible="*" id=$SOURCE_ID}
-                            <td><a href="{$url|replace:'__ID__':$ID}">{$ID}</a></td>
-                            <td><a href="{$url|replace:'__ID__':$ID}">{$TITLE}</a></td>
-                        {/loop}
+                        {if !isset($type)}
+                            {loop name="info" type=$source backend_context=1 visible="*" id=$SOURCE_ID}
+                                <td><a href="{$url|replace:'__ID__':$ID}">{$ID}</a></td>
+                                <td><a href="{$url|replace:'__ID__':$ID}">{$TITLE}</a></td>
+                            {/loop}
+                        {else}
+                            {loop name="info" type=$type backend_context=1 visible="*" id=$SOURCE_ID source=$source}
+                                <td><a href="{$url|replace:'__ID__':$ID}">{$ID}</a></td>
+                                <td><a href="{$url|replace:'__ID__':$ID}">{$TITLE}</a></td>
+                            {/loop}
+                        {/if}
                     {/ifloop}
                     {elseloop rel="info"}
                         {$orphans = true scope=parent}

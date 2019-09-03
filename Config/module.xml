@@ -4,16 +4,16 @@
         xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_2.xsd">
     <fullnamespace>Tags\Tags</fullnamespace>
     <descriptive locale="en_US">
-        <title>Add tags to your products, categories, contents, folders and brands.</title>
+        <title>Add tags to your products, categories, contents, folders, brands, images and documents.</title>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title>Ajoutez des tags à vos produits, categories, contenus, dossiers et marques.</title>
+        <title>Ajoutez des tags à vos produits, categories, contenus, dossiers, marques, images and documents.</title>
     </descriptive>
     <languages>
         <language>en_US</language>
         <language>fr_FR</language>
     </languages>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
     <authors>
         <author>
             <name>Franck Allimant</name>
