@@ -108,7 +108,7 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
         $query = TagsQuery::create();
 
         if (null !== $id = $this->getId()) {
-            $query->filterBySource($id, Criteria::IN);
+            $query->filterById($id, Criteria::IN);
         }
 
         if (null !== $source = $this->getSource()) {
