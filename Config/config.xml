@@ -9,9 +9,13 @@
     </loops>
 
     <services>
-        <service id="tags.listener" class="Tags\EventListeners\EventManager" scope="request">
+        <service id="tags.listener" class="Tags\EventListeners\EventManager">
             <tag name="kernel.event_subscriber"/>
             <argument type="service" id="request"/>
+        </service>
+
+        <service id="tags.smarty_plugin" class="Tags\Smarty\TagsPlugin">
+            <tag name="thelia.parser.register_plugin"/>
         </service>
     </services>
 

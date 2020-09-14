@@ -20,6 +20,14 @@ You can tagged the content that has the ID 12 with 'my-special-content' and use 
 ```
 This way you avoid putting hard IDs in your code. This is one of the possible uses of these tags, but it there are surely many more.
 
+A Smarty extension allows you to determine if an object has a tag in a template :
+
+```
+{if {has_tag id=12 source='content' tag="my-special-content"}}
+    The content ID=12 has the "my-special-content" tag}
+{/if}
+``` 
+
 ## Standard loops extension
 
 Since the version 1.1 of the module, you can directly use the parameter tag in the loops `product`, `content`, `folder`, `category` and `brand`. That's one request saved !
@@ -79,6 +87,19 @@ To get the content with the type `my-special-content` :
 {/loop}    
 ```
 
+## The Smarty extension `has_tag`
+
+This Smlarty extension return `true` if an object has a specifioed tag, or `false` otherwise.
+
+```
+{has_tag id=12 source='product' tag='a_tag,another_tag'}
+```
+
+|Argument |Description |
+|---      |--- |
+|**id** | ID of the source object (ex. a product ID) |
+|**source** | The type of the source object. The possible values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image` or `brand_document` |
+|**tag** | Tag values, at least one, separated by commas |
 
 ==fr_FR==
 
@@ -103,6 +124,14 @@ vous pouvez tagger le contenu qui a l'ID 12 avec 'mon-contenu-special' et utilis
 
 Vous évitez ainsi de mettre des ID en dur dans votre code. C'est l'une des utilisations possible de ces tags, mais il
 en existe surement bien d'autres.
+
+Une extension Smarty permet de déterminer si un objet possède un tag :
+
+```
+{if {has_tag id=12 source='content' tag="mon-contenu-special"}}
+    Le contenu ID=12 possède le tag "mon-contenu-special"}
+{/if}
+``` 
 
 ## Extension des boucles standard
 
@@ -167,3 +196,17 @@ Pour remonter le contenu ayant le tag `mon-contenu-special` :
 {/loop}    
 ```
 
+## L'extension Smarty `has_tag`
+
+Cette extension Smarty permet de déterminet si un objet possède un des tags demandés. Elle retourne `true` si c'est
+le cas, `false sinon.
+
+```
+{has_tag id=12 source='product' tag='un_tag,un_autre_tag'}
+```
+
+|Argument |Description |
+|---      |--- |
+|**id** | Identifiant de l'objet concerné (ex. ID d'un produit) |
+|**source** | Source de l'objet concerné. Les valeurs possibles sont `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
+|**tag** | Tags à rechercher, au moins un, séparés par des virgules |
