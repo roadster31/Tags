@@ -100,6 +100,7 @@ This Smlarty extension return `true` if an object has a specifioed tag, or `fals
 |**id** | ID of the source object (ex. a product ID) |
 |**source** | The type of the source object. The possible values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image` or `brand_document` |
 |**tag** | Tag values, at least one, separated by commas |
+|**tag_match_mode** | Comparison mod of tags. Can take the following values:<ul><li> `exact` (by default) : the loop look for the tags which are exactly identical to the tags selected</li><li> `partial` : the loop look for the objects which contained all or a part of the tags asked, for example if the tag 'rou' is asked, the loop will find the objects with the tags 'rou', 'rough' or 'trouble'</li></ul>|
 
 ==fr_FR==
 
@@ -210,3 +211,4 @@ le cas, `false sinon.
 |**id** | Identifiant de l'objet concerné (ex. ID d'un produit) |
 |**source** | Source de l'objet concerné. Les valeurs possibles sont `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
 |**tag** | Tags à rechercher, au moins un, séparés par des virgules |
+|**tag_match_mode** | Mode de comparaison des tags. Peut prendre les valeurs suivantes:<ul><li> `exact` (par défaut) : la boucle recherche les tags qui sont exactement identiques aux tags demandés</li><li> `partial` : la boucle recherche les objets qui contiennent tout ou une partie des tags demandés, par exemple si le tag 'rou' est demandé, la boucle remontera les objets possédant les tags 'rou', 'rouge' ou 'trou'</li></ul>|
