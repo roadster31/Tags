@@ -28,6 +28,7 @@ class TagsPlugin extends AbstractSmartyPlugin
         $id = (int) $params['id'];
         $source = $params['source'];
         $tagList = $params['tag'];
+        $tagMatchMode = $params['tag_match_mode'] ? $params['tag_match_mode'] : 'exact';
 
         $tagArray = explode(',', $tagList);
 
@@ -35,12 +36,19 @@ class TagsPlugin extends AbstractSmartyPlugin
             $value = trim($value);
         });
 
-        return TagsQuery::create()
+        $query = TagsQuery::create()
                 ->filterBySourceId($id)
-                ->filterBySource($source)
-                ->filterByTag($tagArray, Criteria::IN)
-                ->count() > 0
-            ;
+                ->filterBySource($source);
+
+        if('exact' === $tagMatchMode) {
+            $query->filterByTag($tagArray, Criteria::IN);
+        } else {
+            foreach ($tagArray as $tag) {
+                $query->filterByTag("%$tag%", Criteria::LIKE);
+            }
+        }
+
+        return $query->count() > 0;
     }
 
     /**
