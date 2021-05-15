@@ -57,8 +57,8 @@ The module adds an entry 'Tags' in the Tools menu in back office, which give you
 |Argument |Description |
 |---      |--- |
 |**id** | Return tag with this ID |
-|**source** | Source of associated objects. The possibles values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
-|**exclude_source** | Source of associated objects to exclude from the result. The possibles values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
+|**source** | Source of associated objects. The possibles values are `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document`. Giving a value missing from this list will not cause an error. |
+|**exclude_source** | Source of associated objects to exclude from the result. See `source` for possible values. |
 |**source_id** | ID of associated objects |
 |**exclude_source_id** | ID of associated objects to exclude from the result |
 |**tag** | Tags to search |
@@ -166,8 +166,8 @@ définis sur les produits, catégories, contenus, dossiers, images et documents.
 |Argument |Description |
 |---      |--- |
 |**id** | Retourne le tag ayant cet ID |
-|**source** | Source des objets associés. Les valeurs possibles sont `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
-|**exclude_source** | Source des objets associés à exclure des résultats. Les valeurs possibles sont `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
+|**source** | Source des objets associés. Les valeurs possibles ne sont pas limitées, mais doivent permettre de construire une Query propel à partir du nom. Exemple : 'product' => ProductQuery, 'product_image' => ProductImageQuery. Les valeurs supportées par defaut sont `product`, `category`, `content`, `folder`, `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document`. Une valeur absente de cette liste ne provoquera pas d'erreur.  |
+|**exclude_source** | Source des objets associés à exclure des résultats. Voir le paramètre `source` pour les valeurs possibles. |
 |**source_id** | Identifiants des objets associés |
 |**exclude_source_id** | Identifiants des objets associés à exclure des résultats |
 |**tag** | Tags à rechercher |
@@ -180,7 +180,7 @@ définis sur les produits, catégories, contenus, dossiers, images et documents.
 |Variable   |Description |
 |---        |--- |
 |ID    | Identifiant du tag |
-|SOURCE | le type d'objet auquel ce tag est associé. Les valeurs possible sont `product`, `category`, `content`, `folder` ou `brand`, `product_image`, `product_document`, `category_image`, `category_document`, `content_image`, `content_document`, `folder_image`, `folder_document`, `brand_image`, `brand_document` |
+|SOURCE | le type d'objet auquel ce tag est associé.
 |SOURCE_ID | Identifiant de l'objet source |
 |TAG    | valeur du tag, telle qu'elle a été indiquée dans le back-office  |
 |CREATED_AT| Date de creation du tag  |
