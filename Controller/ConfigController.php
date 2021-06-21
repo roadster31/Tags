@@ -13,6 +13,7 @@
 namespace Tags\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Tags\Events\DeleteOrphanEvent;
 use Tags\Model\Tags;
 use Tags\Model\TagsQuery;
 use Thelia\Controller\Admin\BaseAdminController;
@@ -33,11 +34,16 @@ class ConfigController extends BaseAdminController
         /** @var Tags $tag */
         foreach ($tagList as $tag) {
             $queryClass = "Thelia\\Model\\" . ucfirst($tag->getSource()) . 'Query';
-            $method = new \ReflectionMethod($queryClass, 'create');
-            $search = $method->invoke(null); // Static !
+            try {
+                $method = new \ReflectionMethod($queryClass, 'create');
+                $search = $method->invoke(null); // Static !
 
-            if (null == $search->findPk($tag->getSourceId())) {
-                $tag->delete();
+                if (null == $search->findPk($tag->getSourceId())) {
+                    $tag->delete();
+                }
+            } catch (\ReflectionException $ex) {
+                // Method does not exists => fire an event to whom may process it
+                $this->getDispatcher()->dispatch(\Tags\Tags::DELETE_ORPHAN_EVENT, new DeleteOrphanEvent($tag));
             }
         }
 

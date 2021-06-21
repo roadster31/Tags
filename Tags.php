@@ -22,9 +22,10 @@ class Tags extends BaseModule
     /** @var string */
     const DOMAIN_NAME = 'tags';
 
+    const DELETE_ORPHAN_EVENT = 'tags.delete_orphan_event';
+
     public function postActivation(ConnectionInterface $con = null)
     {
-        // Créer la base de données si elle n'existe pas
         try {
             TagsQuery::create()->findOne();
         } catch (\Exception $ex) {

@@ -36,6 +36,7 @@ use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Event\TheliaFormEvent;
 use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Template\Loop\Argument\Argument;
+use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Translation\Translator;
 use Thelia\Model\Map\BrandDocumentTableMap;
 use Thelia\Model\Map\BrandImageTableMap;
@@ -182,7 +183,7 @@ class EventManager implements EventSubscriberInterface
 
     public function imageLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
     {
-        switch ($event->getLoop()->getArgumentCollection()->get('source')->getValue()) {
+        switch ($this->getLoopObjectType($event->getLoop()->getArgumentCollection())) {
             case 'product':
                 $this->setupLoopBuildModelCriteria(ProductImageTableMap::ID, 'product_image', $event);
                 break;
@@ -205,7 +206,7 @@ class EventManager implements EventSubscriberInterface
 
     public function documentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
     {
-        switch ($event->getLoop()->getArgumentCollection()->get('source')->getValue()) {
+        switch ($this->getLoopObjectType($event->getLoop()->getArgumentCollection())) {
             case 'product':
                 $this->setupLoopBuildModelCriteria(ProductDocumentTableMap::ID, 'product_document', $event);
                 break;
@@ -224,6 +225,35 @@ class EventManager implements EventSubscriberInterface
             default:
                 break;
         }
+    }
+
+    /**
+     * Guess object type for image and doucment loops
+     *
+     * @param ArgumentCollection $argumentCollection
+     * @return string|null
+     */
+    protected function getLoopObjectType(ArgumentCollection $argumentCollection)
+    {
+        static $knownObjects = [
+            'product',
+            'category',
+            'content',
+            'folder',
+            'brand'
+        ];
+
+        $objectType = $argumentCollection->get('source')->getValue();
+
+        if (empty($objectType)) {
+            foreach ($knownObjects as $object) {
+                if (! empty($argumentCollection->get($object)->getValue())) {
+                    return $object;
+                }
+            }
+        }
+
+        return null;
     }
 
     protected function setupLoopBuildModelCriteria($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
