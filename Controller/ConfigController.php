@@ -12,18 +12,18 @@
 
 namespace Tags\Controller;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Tags\Events\DeleteOrphanEvent;
-use Tags\Model\Tags;
 use Tags\Model\TagsQuery;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
-use Thelia\Core\Security\Resource\AdminResources;
+use Tags\Tags;
 use Thelia\Tools\URL;
 
 class ConfigController extends BaseAdminController
 {
-    public function fixOrphans()
+    public function fixOrphans(EventDispatcher $dispatcher)
     {
         if (null !== $response = $this->checkAuth('Tags', [], [AccessManager::DELETE])) {
             return $response;
@@ -31,7 +31,7 @@ class ConfigController extends BaseAdminController
 
         $tagList = TagsQuery::create()->find();
 
-        /** @var Tags $tag */
+        /** @var $tag */
         foreach ($tagList as $tag) {
             $queryClass = "Thelia\\Model\\" . ucfirst($tag->getSource()) . 'Query';
             try {
@@ -43,7 +43,7 @@ class ConfigController extends BaseAdminController
                 }
             } catch (\ReflectionException $ex) {
                 // Method does not exists => fire an event to whom may process it
-                $this->getDispatcher()->dispatch(\Tags\Tags::DELETE_ORPHAN_EVENT, new DeleteOrphanEvent($tag));
+                $dispatcher->dispatch(new DeleteOrphanEvent($tag), Tags::DELETE_ORPHAN_EVENT);
             }
         }
 

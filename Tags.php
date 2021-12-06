@@ -24,7 +24,7 @@ class Tags extends BaseModule
 
     const DELETE_ORPHAN_EVENT = 'tags.delete_orphan_event';
 
-    public function postActivation(ConnectionInterface $con = null)
+    public function postActivation(ConnectionInterface $con = null): void
     {
         try {
             TagsQuery::create()->findOne();
@@ -35,7 +35,7 @@ class Tags extends BaseModule
     }
 
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
         $database = new Database($con->getWrappedConnection());
 

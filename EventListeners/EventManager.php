@@ -15,6 +15,7 @@ namespace Tags\EventListeners;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Tags\Model\Map\TagsTableMap;
 use Tags\Model\TagsQuery;
 use Tags\Tags;
@@ -321,7 +322,7 @@ class EventManager implements EventSubscriberInterface
     {
         $event->getForm()->getFormBuilder()->add(
             'tags',
-            'text',
+            TextType::class,
             [
                 'required' => false,
                 'label' => Translator::getInstance()->trans(
