@@ -29,7 +29,7 @@ use Thelia\Tools\URL;
 
 class HookManager extends BaseHook
 {
-    public function onMainTopMenuTools(HookRenderBlockEvent $event)
+    public function onMainTopMenuTools(HookRenderBlockEvent $event): void
     {
         $event->add(
             [
@@ -41,7 +41,7 @@ class HookManager extends BaseHook
         );
     }
 
-    private function processFieldHook(HookRenderEvent $event, $sourceType, $sourceId)
+    private function processFieldHook(HookRenderEvent $event, $sourceType, $sourceId): void
     {
         $tags = TagsQuery::create()
             ->filterBySource($sourceType)
@@ -65,45 +65,45 @@ class HookManager extends BaseHook
         );
     }
 
-    public function onModuleConfiguration(HookRenderEvent $event)
+    public function onModuleConfiguration(HookRenderEvent $event): void
     {
         $event->add(
             $this->render("tags-includes/module-configuration.html")
         );
     }
 
-    public function onProductEditRightColumnBottom(HookRenderEvent $event)
+    public function onProductEditRightColumnBottom(HookRenderEvent $event): void
     {
         $this->processFieldHook($event, 'product', $event->getArgument('product_id'));
     }
 
-    public function onCategoryEditRightColumnBottom(HookRenderEvent $event)
+    public function onCategoryEditRightColumnBottom(HookRenderEvent $event): void
     {
         $this->processFieldHook($event, 'category', $event->getArgument('category_id'));
     }
 
-    public function onContentEditRightColumnBottom(HookRenderEvent $event)
+    public function onContentEditRightColumnBottom(HookRenderEvent $event): void
     {
         $this->processFieldHook($event, 'content', $event->getArgument('content_id'));
     }
 
-    public function onFolderEditRightColumnBottom(HookRenderEvent $event)
+    public function onFolderEditRightColumnBottom(HookRenderEvent $event): void
     {
         $this->processFieldHook($event, 'folder', $event->getArgument('folder_id'));
     }
 
-    public function onBrandEditRightColumnBottom(HookRenderEvent $event)
+    public function onBrandEditRightColumnBottom(HookRenderEvent $event): void
     {
         $this->processFieldHook($event, 'brand', $event->getArgument('brand_id'));
     }
 
-    public function addTagFieldJs(HookRenderEvent $event)
+    public function addTagFieldJs(HookRenderEvent $event): void
     {
         $imageJs = $this->addJS("tags-includes/assets/js/addFieldInForm.js", []);
         $event->add($imageJs);
     }
 
-    public function hiddenTagTemplate(HookRenderEvent $event)
+    public function hiddenTagTemplate(HookRenderEvent $event): void
     {
         $help = Translator::getInstance()->trans('Enter one or more tags, separated by commas.', [],Tags::DOMAIN_NAME);
         $url = URL::getInstance()->absoluteUrl('/admin/module/Tags');
