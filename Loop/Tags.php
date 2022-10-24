@@ -175,7 +175,7 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
 
     public function parseResults(LoopResult $loopResult)
     {
-        /** @var \Tags\Model\Tags $tag */
+        /** @var Tags $tag */
         foreach ($loopResult->getResultDataCollection() as $tag) {
             $loopResultRow = new LoopResultRow($tag);
 

@@ -35,7 +35,7 @@ class Tags extends BaseModule
         }
     }
 
-    public function update($currentVersion, $newVersion, ?ConnectionInterface $con = null): void
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
         $database = new Database($con->getWrappedConnection());
 
