@@ -16,6 +16,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Tags\Model\Map\TagsTableMap;
 use Tags\Model\TagsQuery;
 use Tags\Tags;
@@ -61,6 +62,13 @@ use Thelia\Type\TypeCollection;
 
 class EventManager implements EventSubscriberInterface
 {
+    protected $request;
+
+    public function __construct(RequestStack $request)
+    {
+        $this->request = $request->getCurrentRequest();
+    }
+
     public static function getSubscribedEvents()
     {
         return [

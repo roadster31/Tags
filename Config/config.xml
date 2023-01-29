@@ -8,16 +8,6 @@
         <loop name="tags" class="Tags\Loop\Tags" />
     </loops>
 
-    <services>
-        <service id="tags.listener" class="Tags\EventListeners\EventManager">
-            <tag name="kernel.event_subscriber"/>
-        </service>
-
-        <service id="Tags\Smarty\TagsPlugin">
-            <tag name="thelia.parser.register_plugin"/>
-        </service>
-    </services>
-
     <hooks>
         <hook id="tags.menutools.hook" class="Tags\Hook\HookManager" scope="request">
             <tag name="hook.event_listener" event="main.top-menu-tools" type="back" method="onMainTopMenuTools" />
