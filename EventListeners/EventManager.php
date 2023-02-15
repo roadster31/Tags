@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Tags\Model\Map\TagsTableMap;
-use Tags\Model\TagsQuery;
+use Tags\Model\Base\TagsQuery;
 use Tags\Tags;
 use Thelia\Core\Event\ActionEvent;
 use Thelia\Core\Event\Brand\BrandDeleteEvent;
