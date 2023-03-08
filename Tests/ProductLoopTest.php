@@ -19,14 +19,20 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tags\EventListeners\EventManager;
 use Thelia\Core\Template\Loop\Product;
 
+/**
+ * @property $container
+ * @property $instance
+ * @method assertEquals(int $int, $getCount)
+ * @method assertNotEquals($productId, mixed $ID)
+ */
 class ProductLoopTest extends BaseTagTest
 {
-    public function getTestedClassName()
+    public function getTestedClassName(): string
     {
         return 'Thelia\Core\Template\Loop\Product';
     }
 
-    public function getTestedInstance()
+    public function getTestedInstance(): Product
     {
         $this->container->setParameter(
             "thelia.parser.loops",
@@ -43,14 +49,14 @@ class ProductLoopTest extends BaseTagTest
         return new Product($this->container);
     }
 
-    public function getMandatoryArguments()
+    public function getMandatoryArguments(): array
     {
         return [
             'tag' => '__test_tag1'
         ];
     }
 
-    public function testSearchMode()
+    public function testSearchMode(): void
     {
         $this->instance->initializeArgs([
             'tag_match_mode' => 'partial',

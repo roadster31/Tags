@@ -12,6 +12,7 @@
 
 namespace Tags;
 
+use Exception;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Tags\Model\TagsQuery;
@@ -29,7 +30,7 @@ class Tags extends BaseModule
     {
         try {
             TagsQuery::create()->findOne();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             $database = new Database($con->getWrappedConnection());
             $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
         }

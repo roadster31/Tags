@@ -14,6 +14,7 @@ use Tags\Model\Base\TagsQuery as BaseTagsQuery;
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
+ * @method static create()
  */
 class TagsQuery extends BaseTagsQuery
 {

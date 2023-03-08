@@ -16,8 +16,7 @@
 namespace Tags\Tests;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Tags\EventListeners\EventManager;
+use Tags\Model\Tags;
 use Tags\Model\TagsQuery;
 use Thelia\Model\ProductQuery;
 use Thelia\Tests\Core\Template\Element\BaseLoopTestor;
@@ -26,13 +25,13 @@ abstract class BaseTagTest extends BaseLoopTestor
 {
     protected $productId;
 
-    public function setUp()
+    public function setUp(): void
     {
         $prod = ProductQuery::create()->findOne();
 
         $this->productId = $prod->getId();
 
-        $tag = new \Tags\Model\Tags();
+        $tag = new Tags();
         $tag->setSource('product')
             ->setSourceId($prod->getId())
             ->setTag('__test_tag1')
@@ -40,7 +39,7 @@ abstract class BaseTagTest extends BaseLoopTestor
 
         $prod2 = ProductQuery::create()->filterById($prod->getId(), Criteria::NOT_EQUAL)->findOne();
 
-        $tag = new \Tags\Model\Tags();
+        $tag = new Tags();
         $tag->setSource('product')
             ->setSourceId($prod2->getId())
             ->setTag('__test_tag2')
@@ -49,7 +48,7 @@ abstract class BaseTagTest extends BaseLoopTestor
         parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         TagsQuery::create()
             ->filterByTag('__test_%', Criteria::LIKE)

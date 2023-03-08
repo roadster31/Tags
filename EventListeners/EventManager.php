@@ -14,8 +14,10 @@ namespace Tags\EventListeners;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\Exception\PropelException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Tags\Model\Map\TagsTableMap;
 use Tags\Model\TagsQuery;
@@ -36,7 +38,6 @@ use Thelia\Core\Event\Product\ProductDeleteEvent;
 use Thelia\Core\Event\Product\ProductEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Event\TheliaFormEvent;
-use Thelia\Core\HttpFoundation\Request;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Translation\Translator;
@@ -62,14 +63,14 @@ use Thelia\Type\TypeCollection;
 
 class EventManager implements EventSubscriberInterface
 {
-    protected $request;
+    protected ?Request $request;
 
     public function __construct(RequestStack $request)
     {
         $this->request = $request->getCurrentRequest();
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             TheliaEvents::PRODUCT_DELETE  => [ 'deleteProduct' ],
@@ -138,7 +139,7 @@ class EventManager implements EventSubscriberInterface
         ];
     }
 
-    public function addLoopArgDefinition(LoopExtendsArgDefinitionsEvent $event)
+    public function addLoopArgDefinition(LoopExtendsArgDefinitionsEvent $event): void
     {
         $argument = $event->getArgumentCollection();
         $argument
@@ -158,32 +159,50 @@ class EventManager implements EventSubscriberInterface
         ;
     }
 
-    public function contentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function contentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $this->setupLoopBuildModelCriteria(ContentTableMap::ID, 'content', $event);
     }
 
-    public function categoryLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function categoryLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $this->setupLoopBuildModelCriteria(CategoryTableMap::ID, 'category', $event);
     }
 
-    public function productLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function productLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $this->setupLoopBuildModelCriteria(ProductTableMap::ID, 'product', $event);
     }
 
-    public function folderLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function folderLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $this->setupLoopBuildModelCriteria(FolderTableMap::ID, 'folder', $event);
     }
 
-    public function brandLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function brandLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $this->setupLoopBuildModelCriteria(BrandTableMap::ID, 'brand', $event);
     }
 
-    public function imageLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function imageLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event): void
     {
         switch ($this->getLoopObjectType($event->getLoop()->getArgumentCollection())) {
             case 'product':
@@ -206,7 +225,10 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
-    public function documentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function documentLoopBuildModelCriteria(LoopExtendsBuildModelCriteriaEvent $event): void
     {
         switch ($this->getLoopObjectType($event->getLoop()->getArgumentCollection())) {
             case 'product':
@@ -235,7 +257,7 @@ class EventManager implements EventSubscriberInterface
      * @param ArgumentCollection $argumentCollection
      * @return string|null
      */
-    protected function getLoopObjectType(ArgumentCollection $argumentCollection)
+    protected function getLoopObjectType(ArgumentCollection $argumentCollection): ?string
     {
         static $knownObjects = [
             'product',
@@ -258,13 +280,16 @@ class EventManager implements EventSubscriberInterface
         return null;
     }
 
-    protected function setupLoopBuildModelCriteria($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    protected function setupLoopBuildModelCriteria($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $this->handleTagArgument($leftTableFieldName, $loopType, $event);
         $this->handleExcludeTagArgument($leftTableFieldName, $loopType, $event);
     }
 
-    protected function handleTagArgument($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
+    protected function handleTagArgument($leftTableFieldName, $loopType, LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $tags = $event->getLoop()->getArgumentCollection()->get('tag')->getValue();
 
@@ -288,7 +313,10 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
-    protected function handleExcludeTagArgument($leftTableId, $loopType, LoopExtendsBuildModelCriteriaEvent $event)
+    /**
+     * @throws PropelException
+     */
+    protected function handleExcludeTagArgument($leftTableId, $loopType, LoopExtendsBuildModelCriteriaEvent $event): void
     {
         $excludeTags = $event->getLoop()->getArgumentCollection()->get('exclude_tag')->getValue();
 
@@ -319,7 +347,7 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
-    public function addFieldToForm(TheliaFormEvent $event)
+    public function addFieldToForm(TheliaFormEvent $event): void
     {
         $event->getForm()->getFormBuilder()->add(
             'tags',
@@ -342,7 +370,7 @@ class EventManager implements EventSubscriberInterface
         );
     }
 
-    public function processTags(ActionEvent $event, $source, $sourceId)
+    public function processTags(ActionEvent $event, $source, $sourceId): void
     {
         // Utilise le principe NON DOCUMENTE qui dit que si une form bindée à un event trouve
         // un champ absent de l'event, elle le rend accessible à travers une méthode magique.
@@ -371,63 +399,63 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
-    public function processProductFields(ProductEvent $event)
+    public function processProductFields(ProductEvent $event): void
     {
         if ($event->hasProduct()) {
             $this->processTags($event, 'product', $event->getProduct()->getId());
         }
     }
 
-    public function processCategoryFields(CategoryEvent $event)
+    public function processCategoryFields(CategoryEvent $event): void
     {
         if ($event->hasCategory()) {
             $this->processTags($event, 'category', $event->getCategory()->getId());
         }
     }
 
-    public function processFolderFields(FolderEvent $event)
+    public function processFolderFields(FolderEvent $event): void
     {
         if ($event->hasFolder()) {
             $this->processTags($event, 'folder', $event->getFolder()->getId());
         }
     }
 
-    public function processContentFields(ContentEvent $event)
+    public function processContentFields(ContentEvent $event): void
     {
         if ($event->hasContent()) {
             $this->processTags($event, 'content', $event->getContent()->getId());
         }
     }
 
-    public function processBrandFields(BrandEvent $event)
+    public function processBrandFields(BrandEvent $event): void
     {
         if ($event->hasBrand()) {
             $this->processTags($event, 'brand', $event->getBrand()->getId());
         }
     }
 
-    public function processImageFields(FileCreateOrUpdateEvent $event)
+    public function processImageFields(FileCreateOrUpdateEvent $event): void
     {
         if (null !== $model = $event->getModel()) {
             switch (get_class($model)) {
                 case 'Thelia\Model\ProductImage':
-                    $event->tags = $this->request->request->get('thelia_product_image_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_product_image_modification')['tags'] ?? '';
                     $this->processTags($event, 'product_image', $model->getId());
                     break;
                 case 'Thelia\Model\CategoryImage':
-                    $event->tags = $this->request->request->get('thelia_category_image_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_category_image_modification')['tags'] ?? '';
                     $this->processTags($event, 'category_image', $model->getId());
                     break;
                 case 'Thelia\Model\ContentImage':
-                    $event->tags = $this->request->request->get('thelia_content_image_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_content_image_modification')['tags'] ?? '';
                     $this->processTags($event, 'content_image', $model->getId());
                     break;
                 case 'Thelia\Model\FolderImage':
-                    $event->tags = $this->request->request->get('thelia_folder_image_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_folder_image_modification')['tags'] ?? '';
                     $this->processTags($event, 'folder_image', $model->getId());
                     break;
                 case 'Thelia\Model\BrandImage':
-                    $event->tags = $this->request->request->get('thelia_brand_image_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_brand_image_modification')['tags'] ?? '';
                     $this->processTags($event, 'brand_image', $model->getId());
                     break;
                 default:
@@ -436,28 +464,28 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
-    public function processDocumentFields(FileCreateOrUpdateEvent $event)
+    public function processDocumentFields(FileCreateOrUpdateEvent $event): void
     {
         if (null !== $model = $event->getModel()) {
             switch (get_class($model)) {
                 case 'Thelia\Model\ProductDocument':
-                    $event->tags = $this->request->request->get('thelia_product_document_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_product_document_modification')['tags'] ?? '';
                     $this->processTags($event, 'product_document', $model->getId());
                     break;
                 case 'Thelia\Model\CategoryDocument':
-                    $event->tags = $this->request->request->get('thelia_category_document_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_category_document_modification')['tags'] ?? '';
                     $this->processTags($event, 'category_document', $model->getId());
                     break;
                 case 'Thelia\Model\ContentDocument':
-                    $event->tags = $this->request->request->get('thelia_content_document_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_content_document_modification')['tags'] ?? '';
                     $this->processTags($event, 'content_document', $model->getId());
                     break;
                 case 'Thelia\Model\FolderDocument':
-                    $event->tags = $this->request->request->get('thelia_folder_document_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_folder_document_modification')['tags'] ?? '';
                     $this->processTags($event, 'folder_document', $model->getId());
                     break;
                 case 'Thelia\Model\BrandDocument':
-                    $event->tags = $this->request->request->get('thelia_brand_document_modification')['tags'];
+                    $event->tags = $this->request->request->get('thelia_brand_document_modification')['tags'] ?? '';
                     $this->processTags($event, 'brand_document', $model->getId());
                     break;
                 default:
@@ -466,27 +494,27 @@ class EventManager implements EventSubscriberInterface
         }
     }
 
-    public function deleteProduct(ProductDeleteEvent $event)
+    public function deleteProduct(ProductDeleteEvent $event): void
     {
         TagsQuery::create()->filterBySource('product')->filterBySourceId($event->getProductId())->delete();
     }
 
-    public function deleteCategory(CategoryDeleteEvent $event)
+    public function deleteCategory(CategoryDeleteEvent $event): void
     {
         TagsQuery::create()->filterBySource('category')->filterBySourceId($event->getCategoryId())->delete();
     }
 
-    public function deleteContent(ContentDeleteEvent $event)
+    public function deleteContent(ContentDeleteEvent $event): void
     {
         TagsQuery::create()->filterBySource('content')->filterBySourceId($event->getContentId())->delete();
     }
 
-    public function deleteFolder(FolderDeleteEvent $event)
+    public function deleteFolder(FolderDeleteEvent $event): void
     {
         TagsQuery::create()->filterBySource('folder')->filterBySourceId($event->getFolderId())->delete();
     }
 
-    public function deleteBrand(BrandDeleteEvent $event)
+    public function deleteBrand(BrandDeleteEvent $event): void
     {
         TagsQuery::create()->filterBySource('brand')->filterBySourceId($event->getBrandId())->delete();
     }
