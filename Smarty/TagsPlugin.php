@@ -16,6 +16,7 @@
 namespace Tags\Smarty;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Smarty_Internal_Template;
 use Tags\Model\TagsQuery;
 use TheliaSmarty\Template\AbstractSmartyPlugin;
 use TheliaSmarty\Template\SmartyPluginDescriptor;
@@ -23,7 +24,7 @@ use TheliaSmarty\Template\SmartyPluginDescriptor;
 class TagsPlugin extends AbstractSmartyPlugin
 {
 
-    public function hasTag($params, \Smarty_Internal_Template $template)
+    public function hasTag($params, Smarty_Internal_Template $template): bool
     {
         $id = (int) $params['id'];
         $source = $params['source'];
@@ -48,7 +49,7 @@ class TagsPlugin extends AbstractSmartyPlugin
      *
      * @return array an array of smarty plugin descriptors
      */
-    public function getPluginDescriptors()
+    public function getPluginDescriptors(): array
     {
         return array(
             new SmartyPluginDescriptor('function', 'has_tag', $this, 'hasTag')

@@ -17,26 +17,32 @@ namespace Tags\Tests;
 
 use Tags\Loop\Tags;
 
+/**
+ * @property $container
+ * @property $instance
+ * @method assertEquals(int $int, $getCount)
+ * @method assertNotEquals($productId, mixed $SOURCE_ID)
+ */
 class TagLoopTest extends BaseTagTest
 {
-    public function getTestedClassName()
+    public function getTestedClassName(): string
     {
         return 'Tags\Loop\Tags';
     }
 
-    public function getTestedInstance()
+    public function getTestedInstance(): Tags
     {
         return new Tags($this->container);
     }
 
-    public function getMandatoryArguments()
+    public function getMandatoryArguments(): array
     {
         return [
             'source' => 'product'
         ];
     }
 
-    public function testSearchMode()
+    public function testSearchMode(): void
     {
         $this->instance->initializeArgs([
             'source' => 'product',

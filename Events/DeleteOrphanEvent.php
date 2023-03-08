@@ -18,7 +18,7 @@ use Tags\Model\Tags;
 use Thelia\Core\Event\ActionEvent;
 
 /**
- * This event if dispatched when a tag for a non standard object shoud be deleted.
+ * This event if dispatched when a tag for a non-standard object should be deleted.
  *
  * Class DeleteOrphanEvent
  * @package Tags\Events
@@ -26,7 +26,7 @@ use Thelia\Core\Event\ActionEvent;
 class DeleteOrphanEvent extends ActionEvent
 {
     /** @var Tags */
-    protected $tag;
+    protected Tags $tag;
 
     /**
      * DeleteOrphanEvent constructor.

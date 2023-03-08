@@ -12,6 +12,8 @@
 
 namespace Tags\Controller;
 
+use ReflectionException;
+use ReflectionMethod;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Tags\Events\DeleteOrphanEvent;
@@ -35,13 +37,13 @@ class ConfigController extends BaseAdminController
         foreach ($tagList as $tag) {
             $queryClass = "Thelia\\Model\\" . ucfirst($tag->getSource()) . 'Query';
             try {
-                $method = new \ReflectionMethod($queryClass, 'create');
+                $method = new ReflectionMethod($queryClass, 'create');
                 $search = $method->invoke(null); // Static !
 
                 if (null === $search->findPk($tag->getSourceId())) {
                     $tag->delete();
                 }
-            } catch (\ReflectionException $ex) {
+            } catch (ReflectionException $ex) {
                 // Method does not exists => fire an event to whom may process it
                 $dispatcher->dispatch(new DeleteOrphanEvent($tag), Tags::DELETE_ORPHAN_EVENT);
             }

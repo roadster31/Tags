@@ -99,7 +99,7 @@ class HookManager extends BaseHook
 
     public function addTagFieldJs(HookRenderEvent $event): void
     {
-        $imageJs = $this->addJS("tags-includes/assets/js/addFieldInForm.js", []);
+        $imageJs = $this->addJS("tags-includes/assets/js/addFieldInForm.js");
         $event->add($imageJs);
     }
 
