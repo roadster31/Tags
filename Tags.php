@@ -27,11 +27,11 @@ class Tags extends BaseModule
 
     public function postActivation(ConnectionInterface $con = null): void
     {
-        try {
-            TagsQuery::create()->findOne();
-        } catch (\Exception $ex) {
+        if (! self::getConfigValue('is_initialised')) {
             $database = new Database($con->getWrappedConnection());
             $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
+
+            self::getConfigValue('is_initialised', true);
         }
     }
 
