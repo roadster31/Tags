@@ -1,4 +1,5 @@
 <?php
+
 /*************************************************************************************/
 /*                                                                                   */
 /*      Copyright (c) Franck Allimant, CQFDev                                        */
@@ -14,8 +15,13 @@ namespace Tags;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
-use Tags\Model\TagsQuery;
-use Thelia\Install\Database;
+use Tags\Api\Metadata\TagsResourceMetadataCollectionFactory;
+use Thelia\Api\Resource\Category;
+use Thelia\Api\Resource\Content;
+use Thelia\Api\Resource\Folder;
+use Thelia\Api\Resource\Product;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
+use Thelia\Core\Install\Database;
 use Thelia\Module\BaseModule;
 
 class Tags extends BaseModule
@@ -24,6 +30,22 @@ class Tags extends BaseModule
     public const DOMAIN_NAME = 'tags';
 
     public const DELETE_ORPHAN_EVENT = 'tags.delete_orphan_event';
+
+    /** @var string[] */
+    public const array SUPPORTED_RESOURCES_SOURCES = [
+        Product::class => 'product',
+        Category::class => 'category',
+        Content::class => 'content',
+        Folder::class => 'folder',
+    ];
+
+    /** @var string[] */
+    public const array SUPPORTED_RESOURCES_URI = [
+        Product::class => '/front/products',
+        Category::class => '/front/categories',
+        Content::class => '/front/contents',
+        Folder::class => '/front/folders',
+    ];
 
     public function postActivation(ConnectionInterface $con = null): void
     {
@@ -52,8 +74,15 @@ class Tags extends BaseModule
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
-            ->autowire(true)
-            ->autoconfigure(true);
+            ->exclude(["/I18n/*"])
+            ->autowire()
+            ->autoconfigure();
+
+        $servicesConfigurator
+            ->set(TagsResourceMetadataCollectionFactory::class)
+            ->decorate('api_platform.metadata.resource.metadata_collection_factory', null, -20)
+            ->args([
+                service('.inner'),
+            ]);
     }
 }

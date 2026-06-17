@@ -13,6 +13,7 @@
 namespace Tags\Loop;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Tags\Model\TagsQuery;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
@@ -44,7 +45,7 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
 {
     protected $timestampable = true;
 
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id'),
@@ -79,7 +80,7 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
         );
     }
 
-    public function buildModelCriteria()
+    public function buildModelCriteria() : ModelCriteria
     {
         $query = TagsQuery::create();
 
@@ -173,7 +174,7 @@ class Tags extends BaseLoop implements PropelSearchLoopInterface
         return $query;
     }
 
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult) : LoopResult
     {
         /** @var Tags $tag */
         foreach ($loopResult->getResultDataCollection() as $tag) {
